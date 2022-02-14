@@ -5,8 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MarioMaker2Overlay"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="MainWindow" Name="Window" Height="60" Width="850" Background="White" ResizeMode="CanResizeWithGrip" WindowStartupLocation="Manual" MouseDown="Window_MouseDown" MouseUp="Window_MouseUp" MouseMove="Window_MouseMove" Left="600" Top="60" >
+    <Grid HorizontalAlignment="Stretch">
+        <TextBox HorizontalAlignment="Left" Text="Deaths: 0" Name="DeathCount" TextWrapping="Wrap" VerticalAlignment="Top" Width="136" Background="White" RenderTransformOrigin="0.5,0.5" Height="45" FontSize="24" FontFamily="Arial" FontWeight="Normal" FontStyle="Normal" TextDecorations="{x:Null}" Visibility="Visible" BorderBrush="White" Margin="-1,8,0,0">
+            <TextBox.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform AngleX="-2"/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </TextBox.RenderTransform>
+        </TextBox>
+        <TextBox HorizontalAlignment="Left" Margin="142,10,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="153" Height="44" BorderBrush="White" FontSize="24" FontFamily="Arial"/>
 
     </Grid>
 </Window>
