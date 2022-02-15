@@ -17,7 +17,7 @@
                 </TransformGroup>
             </TextBox.RenderTransform>
         </TextBox>
-        <TextBox HorizontalAlignment="Left" Margin="142,10,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="153" Height="44" BorderBrush="White" FontSize="24" FontFamily="Arial"/>
+        <TextBox HorizontalAlignment="Left" Name="Winrate" Margin="135,8,0,0" Text="WR: " TextWrapping="Wrap" VerticalAlignment="Top" Width="153" Height="44" BorderBrush="White" FontSize="24" FontFamily="Arial"/>
 
     </Grid>
 </Window>

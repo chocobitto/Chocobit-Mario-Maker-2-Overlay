@@ -51,10 +51,12 @@ namespace MarioMaker2Overlay
                     case GlobalKeyboardHook.VkUp:
                         deaths += 1;
                         DeathCount.Text = $"Deaths: {deaths}";
+                        WinRate();
                         break;
                     case GlobalKeyboardHook.VkDown:
                         deaths -= 1;
                         DeathCount.Text = $"Deaths: {deaths}";
+                        WinRate();
                         break;
                 }
 
@@ -80,6 +82,10 @@ namespace MarioMaker2Overlay
         public void WinRate()
         {
             decimal attempts = deaths + 1;
+
+            decimal winrate = 1 / attempts * 100;
+
+            Winrate.Text = $"WR: {winrate:f2}%";
         }
 
         private void Window_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
