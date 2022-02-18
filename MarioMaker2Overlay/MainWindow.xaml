@@ -5,19 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MarioMaker2Overlay"
         mc:Ignorable="d"
-        Title="MainWindow" Name="Window" Height="60" Width="850" Background="White" ResizeMode="CanResizeWithGrip" WindowStartupLocation="Manual" MouseDown="Window_MouseDown" Left="600" Top="60" >
+        Title="MainWindow" Name="Window" Height="60" Width="850" Background="White" ResizeMode="NoResize" WindowStartupLocation="Manual" MouseDown="Window_MouseDown" Left="600" Top="60" >
     <Grid HorizontalAlignment="Stretch">
-        <TextBox HorizontalAlignment="Left" Text="Deaths: 0" Name="DeathCount" TextWrapping="Wrap" VerticalAlignment="Top" Width="136" Background="White" RenderTransformOrigin="0.5,0.5" Height="47" FontSize="24" FontFamily="Arial" FontWeight="Normal" FontStyle="Normal" TextDecorations="{x:Null}" Visibility="Visible" BorderBrush="White" Margin="-1,8,0,0">
-            <TextBox.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform AngleX="-2"/>
-                    <RotateTransform/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </TextBox.RenderTransform>
-        </TextBox>
-        <TextBox HorizontalAlignment="Left" Name="Winrate" Margin="135,8,0,0" Text="WR: " TextWrapping="Wrap" VerticalAlignment="Top" Width="153" Height="44" BorderBrush="White" FontSize="24" FontFamily="Arial"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="121*"/>
+            <ColumnDefinition Width="259*"/>
+            <ColumnDefinition Width="470*"/>
+        </Grid.ColumnDefinitions>
+        <Label HorizontalAlignment="Left" Content="Deaths: 0" Name="DeathCount" VerticalAlignment="Center" Width="136" Background="White"  Height="44" FontSize="24" FontFamily="Arial" FontWeight="Normal" FontStyle="Normal" Visibility="Visible" BorderBrush="White" Grid.ColumnSpan="2"/>
+        <Label HorizontalAlignment="Left" Name="Winrate" Margin="15,0,0,0" Content="WR: 100%" VerticalAlignment="Center" Width="161" Height="42" BorderBrush="White" FontSize="24" FontFamily="Arial" Grid.Column="1"/>
+        <Button Content="Serialize" Grid.Column="2" HorizontalAlignment="Left" Margin="425,22,0,0" VerticalAlignment="Top" Height="20" Width="35"/>
+        <Button Content="deSerialize" Grid.Column="2" HorizontalAlignment="Left" Margin="342,20,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>
