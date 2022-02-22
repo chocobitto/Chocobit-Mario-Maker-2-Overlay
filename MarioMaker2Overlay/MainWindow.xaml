@@ -16,6 +16,7 @@
         <Label HorizontalAlignment="Left" Name="Winrate" Margin="15,0,0,0" Content="WR: 100%" VerticalAlignment="Center" Width="161" Height="42" BorderBrush="White" FontSize="24" FontFamily="Arial" Grid.Column="1"/>
         <Button Content="Serialize" Grid.Column="2" HorizontalAlignment="Left" Margin="425,22,0,0" VerticalAlignment="Top" Height="20" Width="35"/>
         <Button Content="deSerialize" Grid.Column="2" HorizontalAlignment="Left" Margin="342,20,0,0" VerticalAlignment="Top"/>
+        <Button Content="Save to DB" Grid.Column="2" HorizontalAlignment="Left" Margin="243,20,0,0" VerticalAlignment="Top" Width="71"/>
 
     </Grid>
 </Window>
