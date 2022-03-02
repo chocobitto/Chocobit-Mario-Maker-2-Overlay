@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Windows;
 using System.Xml;
 using System.Xml.Serialization;
+using MarioMaker2Overlay.Persistence;
 using SnagFree.TrayApp.Core;
 
 namespace MarioMaker2Overlay
@@ -16,6 +17,7 @@ namespace MarioMaker2Overlay
     {
         private GlobalKeyboardHook _globalKeyboardHook;
         private LevelData _levelData = new();
+        private LevelDataRepository levelDataRepository = new();
 
         public MainWindow()
         {
@@ -57,6 +59,7 @@ namespace MarioMaker2Overlay
         private void UpdateUi()
         {
             DeathCount.Content = $"Deaths: {_levelData.PlayerDeaths}";
+            _levelData.Code = LevelCode.Text;
             WinRate();
         }
 
@@ -87,6 +90,57 @@ namespace MarioMaker2Overlay
             {
                 Winrate.Content = string.Empty;
             }
+        }
+
+        private void Button_ClickUpdate(object sender, RoutedEventArgs e)
+        {
+            UpdateUi();
+
+            Persistence.LevelData levelData;
+
+            levelData = LocalToDb();
+
+            levelDataRepository.Update(levelData);
+        }
+
+        private void Button_ClickInsert(object sender, RoutedEventArgs e)
+        {
+            UpdateUi();
+
+            Persistence.LevelData levelData;
+
+            levelData = LocalToDb();
+
+            levelDataRepository.Insert(levelData);
+        }
+
+        private Persistence.LevelData LocalToDb()
+        {
+            Persistence.LevelData data = new();
+
+            data.Code = _levelData.Code;
+            data.PlayerDeaths = _levelData.PlayerDeaths;
+            data.TotalGlobalAttempts = _levelData.TotalGlobalAttempts;
+            data.TotalGlobalClears = _levelData.TotalGlobalClears;
+
+
+            return data;
+        }
+
+        private void Button_ClickGetData(object sender, RoutedEventArgs e)
+        {
+            UpdateUi();
+
+            Persistence.LevelData levelData;
+
+            levelData = levelDataRepository.GetByLevelCode(LevelCode.Text);
+
+            _levelData.Code = levelData.Code;
+            _levelData.PlayerDeaths = levelData.PlayerDeaths;
+            _levelData.TotalGlobalAttempts = levelData.TotalGlobalAttempts;
+            _levelData.TotalGlobalClears = levelData.TotalGlobalClears;
+
+            UpdateUi();
         }
 
         //private void Button_Click(object sender, RoutedEventArgs e)
