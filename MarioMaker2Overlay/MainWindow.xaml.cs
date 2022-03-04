@@ -17,7 +17,7 @@ namespace MarioMaker2Overlay
     {
         private GlobalKeyboardHook _globalKeyboardHook;
         private LevelData _levelData = new();
-        private LevelDataRepository levelDataRepository = new();
+        private LevelDataRepository _levelDataRepository = new();
 
         public MainWindow()
         {
@@ -100,7 +100,7 @@ namespace MarioMaker2Overlay
 
             levelData = LocalToDb();
 
-            levelDataRepository.Update(levelData);
+            _levelDataRepository.Update(levelData);
         }
 
         private void Button_ClickInsert(object sender, RoutedEventArgs e)
@@ -111,7 +111,7 @@ namespace MarioMaker2Overlay
 
             levelData = LocalToDb();
 
-            levelDataRepository.Insert(levelData);
+            _levelDataRepository.Insert(levelData);
         }
 
         private Persistence.LevelData LocalToDb()
@@ -123,7 +123,6 @@ namespace MarioMaker2Overlay
             data.TotalGlobalAttempts = _levelData.TotalGlobalAttempts;
             data.TotalGlobalClears = _levelData.TotalGlobalClears;
 
-
             return data;
         }
 
@@ -133,14 +132,26 @@ namespace MarioMaker2Overlay
 
             Persistence.LevelData levelData;
 
-            levelData = levelDataRepository.GetByLevelCode(LevelCode.Text);
+            levelData = _levelDataRepository.GetByLevelCode(LevelCode.Text);
 
-            _levelData.Code = levelData.Code;
+            _levelData.Code = levelData?.Code;
             _levelData.PlayerDeaths = levelData.PlayerDeaths;
             _levelData.TotalGlobalAttempts = levelData.TotalGlobalAttempts;
             _levelData.TotalGlobalClears = levelData.TotalGlobalClears;
 
             UpdateUi();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Random myRandom = new Random((int)DateTime.Now.Ticks);
+
+            for(int i = 0; i < 1000000; i++)
+            {
+                Persistence.LevelData newLevelData = new Persistence.LevelData { Code = myRandom.Next(100000000, 999999999).ToString(), PlayerDeaths = myRandom.Next(5, 300), TotalGlobalAttempts = myRandom.Next(100, 10000), TotalGlobalClears = myRandom.Next(10, 600) };
+
+                _levelDataRepository.Insert(newLevelData);
+            }
         }
 
         //private void Button_Click(object sender, RoutedEventArgs e)

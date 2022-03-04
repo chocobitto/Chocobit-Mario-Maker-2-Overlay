@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,8 @@ namespace MarioMaker2Overlay.Persistence
             using (MarioMaker2OverlayContext context = new())
             {
                 context.LevelData.Add(levelData);
+
+                context.SaveChanges();
             }
         }
 
@@ -40,9 +43,11 @@ namespace MarioMaker2Overlay.Persistence
 
                 //copy data from passed levelData object
                 //onto "current"
+                current.PlayerDeaths = levelData.PlayerDeaths;
 
                 context.SaveChanges();
             }
+
         }
 
     }
