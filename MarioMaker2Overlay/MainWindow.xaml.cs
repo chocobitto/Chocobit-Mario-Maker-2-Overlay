@@ -5,6 +5,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.Json;
+using System.Text.RegularExpressions;
+using System.Timers;
 using System.Windows;
 using System.Xml;
 using System.Xml.Serialization;
@@ -15,6 +17,7 @@ namespace MarioMaker2Overlay
 {
     public partial class MainWindow : Window
     {
+        private Timer _timer;
         private GlobalKeyboardHook _globalKeyboardHook;
         private LevelData _levelData = new();
         private LevelDataRepository _levelDataRepository = new();
@@ -23,9 +26,36 @@ namespace MarioMaker2Overlay
         {
             InitializeComponent();
             SetupKeyboardHooks();
+
             WindowStyle = WindowStyle.None;
+
+            _timer = new Timer(5000);
+            _timer.Elapsed += TryUpdateLevelData;
         }
 
+        private void TryUpdateLevelData(object? sender, ElapsedEventArgs e)
+        {
+            // Check to see if the data exists
+            if(_levelData?.LevelDataId > 0)
+            {
+                // if it exist update it
+                Persistence.LevelData levelData;
+
+                levelData = LocalToDb();
+
+                _levelDataRepository.Update(levelData);
+            }
+            else if(!string.IsNullOrWhiteSpace(_levelData?.Code))
+            {
+                // if not insert it
+                Persistence.LevelData levelData;
+
+                levelData = LocalToDb();
+
+                _levelDataRepository.Insert(levelData);
+            }
+
+        }
 
         public void SetupKeyboardHooks()
         {
@@ -151,6 +181,14 @@ namespace MarioMaker2Overlay
                 Persistence.LevelData newLevelData = new Persistence.LevelData { Code = myRandom.Next(100000000, 999999999).ToString(), PlayerDeaths = myRandom.Next(5, 300), TotalGlobalAttempts = myRandom.Next(100, 10000), TotalGlobalClears = myRandom.Next(10, 600) };
 
                 _levelDataRepository.Insert(newLevelData);
+            }
+        }
+
+        private void LevelCode_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if(Regex.IsMatch(LevelCode.Text, "[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]-[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]-[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]"))
+            {
+                _levelData.Code = LevelCode.Text;
             }
         }
 

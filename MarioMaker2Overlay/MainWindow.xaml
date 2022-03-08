@@ -17,7 +17,7 @@
         <Button Content="Update" Grid.Column="2" HorizontalAlignment="Left" Margin="370,20,0,0" VerticalAlignment="Top" Height="20" Width="62" Click="Button_ClickUpdate"/>
         <Button Content="Get Data" Grid.Column="2" HorizontalAlignment="Left" Margin="290,20,0,0" VerticalAlignment="Top" Width="62" Click="Button_ClickGetData"/>
         <Button Content="Save to DB" Grid.Column="2" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Top" Width="62" Click="Button_ClickInsert"/>
-        <TextBox Grid.Column="2" HorizontalAlignment="Left" Margin="280,1,0,0" Name="LevelCode" Text="Level Code" TextWrapping="NoWrap" VerticalAlignment="Top" Width="82"/>
+        <TextBox Grid.Column="2"  HorizontalAlignment="Left" CharacterCasing="Upper" Margin="280,1,0,0" Name="LevelCode" Text="Level Code" TextWrapping="NoWrap" VerticalAlignment="Top" Width="82" KeyUp="LevelCode_KeyUp"/>
         <Button Grid.Column="2" Content="Button" HorizontalAlignment="Left" Margin="114,20,0,0" VerticalAlignment="Top" Click="Button_Click"/>
 
     </Grid>

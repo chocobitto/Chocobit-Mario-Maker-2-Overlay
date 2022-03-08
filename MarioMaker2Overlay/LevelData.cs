@@ -8,6 +8,7 @@ namespace MarioMaker2Overlay
 {
     class LevelData
     {
+        public int LevelDataId { get; set; }
         public string Code { get; set; }
         public int PlayerDeaths { get; set; }
         public int TotalGlobalClears { get; set; }
