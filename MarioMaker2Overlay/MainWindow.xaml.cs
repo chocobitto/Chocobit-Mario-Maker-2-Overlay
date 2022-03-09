@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.Json;
@@ -11,6 +12,7 @@ using System.Windows;
 using System.Xml;
 using System.Xml.Serialization;
 using MarioMaker2Overlay.Persistence;
+using MarioMaker2Overlay.Services;
 using SnagFree.TrayApp.Core;
 
 namespace MarioMaker2Overlay
@@ -21,6 +23,7 @@ namespace MarioMaker2Overlay
         private GlobalKeyboardHook _globalKeyboardHook;
         private LevelData _levelData = new();
         private LevelDataRepository _levelDataRepository = new();
+        private NintendoServiceClient _nintendoServiceClient = new(new HttpClient());
 
         public MainWindow()
         {
@@ -184,11 +187,15 @@ namespace MarioMaker2Overlay
             }
         }
 
-        private void LevelCode_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        private async void LevelCode_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if(Regex.IsMatch(LevelCode.Text, "[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]-[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]-[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]"))
+            string levelCode = LevelCode.Text;
+
+            if (Regex.IsMatch(LevelCode.Text, "[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]-[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]-[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]"))
             {
                 _levelData.Code = LevelCode.Text;
+
+                MarioMakerLevelData levelData = await _nintendoServiceClient.GetLevelInfo(levelCode.Replace("-", string.Empty));
             }
         }
 
