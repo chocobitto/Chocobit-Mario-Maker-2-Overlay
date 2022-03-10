@@ -117,11 +117,11 @@ namespace MarioMaker2Overlay
             {
                 decimal winrate = 1 / attempts * 100;
 
-                Winrate.Content = $"WR: {winrate:f2}%";
+                //Winrate.Content = $"WR: {winrate:f2}%";
             }
             else
             {
-                Winrate.Content = string.Empty;
+                //Winrate.Content = string.Empty;
             }
         }
 
@@ -196,6 +196,14 @@ namespace MarioMaker2Overlay
                 _levelData.Code = LevelCode.Text;
 
                 MarioMakerLevelData levelData = await _nintendoServiceClient.GetLevelInfo(levelCode.Replace("-", string.Empty));
+
+                LabelClears.Content = $"{levelData.Attempts}/{levelData.Clears}({levelData.ClearRate})";
+                LabelFirstTag.Content = levelData.TagsName.First() ?? "--";
+                LabelSecondTag.Content = levelData.TagsName.Last() ?? "--";
+                LabelLevelName.Content = $"{levelData.Name} ({levelData.DifficultyName})";;
+                LabelLikes.Content = levelData.Likes;
+                LabelBoos.Content = levelData.Boos;
+                LabelWorldRecord.Content = levelData.WorldRecord;
             }
         }
 

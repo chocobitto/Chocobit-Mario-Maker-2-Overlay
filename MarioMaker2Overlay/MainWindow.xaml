@@ -5,20 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MarioMaker2Overlay"
         mc:Ignorable="d"
-        Title="MainWindow" Name="Window" Height="60" Width="850" Background="White" ResizeMode="NoResize" WindowStartupLocation="Manual" MouseDown="Window_MouseDown" Left="600" Top="60" >
-    <Grid HorizontalAlignment="Stretch">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="121*"/>
-            <ColumnDefinition Width="259*"/>
-            <ColumnDefinition Width="470*"/>
-        </Grid.ColumnDefinitions>
-        <Label HorizontalAlignment="Left" Content="Deaths: 0" Name="DeathCount" VerticalAlignment="Center" Width="136" Background="White"  Height="44" FontSize="24" FontFamily="Arial" FontWeight="Normal" FontStyle="Normal" Visibility="Visible" BorderBrush="White" Grid.ColumnSpan="2"/>
-        <Label HorizontalAlignment="Left" Name="Winrate" Margin="15,0,0,0" Content="WR: 100%" VerticalAlignment="Center" Width="161" Height="42" BorderBrush="White" FontSize="24" FontFamily="Arial" Grid.Column="1"/>
-        <Button Content="Update" Grid.Column="2" HorizontalAlignment="Left" Margin="370,20,0,0" VerticalAlignment="Top" Height="20" Width="62" Click="Button_ClickUpdate"/>
-        <Button Content="Get Data" Grid.Column="2" HorizontalAlignment="Left" Margin="290,20,0,0" VerticalAlignment="Top" Width="62" Click="Button_ClickGetData"/>
-        <Button Content="Save to DB" Grid.Column="2" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Top" Width="62" Click="Button_ClickInsert"/>
-        <TextBox Grid.Column="2"  HorizontalAlignment="Left" CharacterCasing="Upper" Margin="280,1,0,0" Name="LevelCode" Text="Level Code" TextWrapping="NoWrap" VerticalAlignment="Top" Width="82" KeyUp="LevelCode_KeyUp"/>
-        <Button Grid.Column="2" Content="Button" HorizontalAlignment="Left" Margin="114,20,0,0" VerticalAlignment="Top" Click="Button_Click"/>
-
-    </Grid>
+        Title="MainWindow" Name="Window" Height="128" Width="850" Background="White" ResizeMode="NoResize" WindowStartupLocation="Manual" MouseDown="Window_MouseDown" Left="600" Top="60" >
+	<Grid>
+		<Label HorizontalAlignment="Left" Content="Deaths: 999" Name="DeathCount" VerticalAlignment="Top" Width="140" Background="White"  Height="42" FontSize="24" FontFamily="Arial" FontWeight="Normal" FontStyle="Normal" Visibility="Visible" BorderBrush="White"/>
+		<TextBox  HorizontalAlignment="Left" CharacterCasing="Upper" Margin="666,84,0,0" Name="LevelCode" Text="HYP-X4W-6HG" TextWrapping="NoWrap" VerticalAlignment="Top" Width="174" KeyUp="LevelCode_KeyUp" />
+		<Label HorizontalAlignment="Left" Content="(100%)" x:Name="DeathCount_Copy" VerticalAlignment="Top" Width="87" Background="White"  Height="42" FontSize="24" FontFamily="Arial" FontWeight="Normal" FontStyle="Normal" Visibility="Visible" BorderBrush="White" Margin="140,0,0,0"/>
+		<Image HorizontalAlignment="Left" Height="9" Margin="355,64,0,0" VerticalAlignment="Top" Width="16" Source="/Assets/Images/Tag Icon.png"/>
+		<Label x:Name="LabelFirstTag" Content="Standard" HorizontalAlignment="Left" Margin="372,55,0,0" VerticalAlignment="Top" Height="28"/>
+		<Image HorizontalAlignment="Left" Height="9" Margin="355,83,0,0" VerticalAlignment="Top" Width="16" Source="/Assets/Images/Tag Icon.png"/>
+		<Label x:Name="LabelSecondTag" Content="Themed" HorizontalAlignment="Left" Margin="372,74,0,0" VerticalAlignment="Top" Height="28"/>
+		<Label x:Name="LabelWorldRecord" Content="World Record:" HorizontalAlignment="Left" Margin="356,29,0,0" VerticalAlignment="Top" Height="27"/>
+		<Label x:Name="LabelLevelName" Content="Mario's Chalet (Expert)" HorizontalAlignment="Left" Margin="355,0,0,0" VerticalAlignment="Top" Height="35" FontSize="18"/>
+		<Label x:Name="LabelLikes" Content="" HorizontalAlignment="Left" Margin="515,55,0,0" VerticalAlignment="Top"/>
+		<Label x:Name="LabelBoos" Content="" HorizontalAlignment="Left" Margin="515,84,0,0" VerticalAlignment="Top"/>
+		<Label x:Name="LabelClears" Content="Clears: 3/100 (33%)" HorizontalAlignment="Left" Margin="660,16,0,0" VerticalAlignment="Top"/>
+	</Grid>
 </Window>

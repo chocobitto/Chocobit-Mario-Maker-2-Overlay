@@ -1,9 +1,5 @@
 ﻿using MarioMaker2Overlay.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MarioMaker2Overlay
