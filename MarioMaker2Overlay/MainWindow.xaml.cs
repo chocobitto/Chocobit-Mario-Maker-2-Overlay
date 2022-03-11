@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -197,13 +198,13 @@ namespace MarioMaker2Overlay
 
                 MarioMakerLevelData levelData = await _nintendoServiceClient.GetLevelInfo(levelCode.Replace("-", string.Empty));
 
-                LabelClears.Content = $"{levelData.Attempts}/{levelData.Clears}({levelData.ClearRate})";
+                LabelClears.Content = $"Clears: {levelData.Clears}/{levelData.Attempts} ({levelData.ClearRate})";
                 LabelFirstTag.Content = levelData.TagsName.First() ?? "--";
                 LabelSecondTag.Content = levelData.TagsName.Last() ?? "--";
                 LabelLevelName.Content = $"{levelData.Name} ({levelData.DifficultyName})";;
                 LabelLikes.Content = levelData.Likes;
                 LabelBoos.Content = levelData.Boos;
-                LabelWorldRecord.Content = levelData.WorldRecord;
+                LabelWorldRecord.Content = $"World Record: {levelData.WorldRecord}";
             }
         }
 
