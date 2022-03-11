@@ -20,11 +20,15 @@ namespace MarioMaker2Overlay
 {
     public partial class MainWindow : Window
     {
-        private Timer _timer;
+        private Timer _updateDatabaseTimer;
         private GlobalKeyboardHook _globalKeyboardHook;
         private LevelData _levelData = new();
         private LevelDataRepository _levelDataRepository = new();
         private NintendoServiceClient _nintendoServiceClient = new(new HttpClient());
+        private Timer _gameTimer;
+        public decimal _time;
+        private Stopwatch _stopwatch = new();
+
 
         public MainWindow()
         {
@@ -33,10 +37,17 @@ namespace MarioMaker2Overlay
 
             WindowStyle = WindowStyle.None;
 
-            _timer = new Timer(5000);
-            _timer.Elapsed += TryUpdateLevelData;
-        }
+            _gameTimer = new Timer(20);
+            _gameTimer.Elapsed += CurrentTimeElapsed;
+            _gameTimer.Enabled = true;
 
+            _stopwatch.Start();
+
+            _updateDatabaseTimer = new Timer(5000);
+            _updateDatabaseTimer.Elapsed += TryUpdateLevelData;
+            _updateDatabaseTimer.Enabled = true;
+        }
+        
         private void TryUpdateLevelData(object? sender, ElapsedEventArgs e)
         {
             // Check to see if the data exists
@@ -158,6 +169,16 @@ namespace MarioMaker2Overlay
             data.TotalGlobalClears = _levelData.TotalGlobalClears;
 
             return data;
+        }
+
+        private void CurrentTimeElapsed(object? sender, ElapsedEventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                GameTime.Content = $"Time: {_stopwatch.Elapsed.ToString("hh\\:mm\\:ss\\.ff")}";
+            });
+
+            
         }
 
         private void Button_ClickGetData(object sender, RoutedEventArgs e)

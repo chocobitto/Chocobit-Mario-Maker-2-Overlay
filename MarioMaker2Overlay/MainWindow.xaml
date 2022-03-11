@@ -19,5 +19,6 @@
 		<Label x:Name="LabelLikes" Content="" HorizontalAlignment="Left" Margin="515,55,0,0" VerticalAlignment="Top"/>
 		<Label x:Name="LabelBoos" Content="" HorizontalAlignment="Left" Margin="515,84,0,0" VerticalAlignment="Top"/>
 		<Label x:Name="LabelClears" Content="Clears: 3/100 (33%)" HorizontalAlignment="Left" Margin="660,16,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="GameTime" Content="" HorizontalAlignment="Left" Margin="5,35,0,0" VerticalAlignment="Top" Height="27"/>
 	</Grid>
 </Window>
