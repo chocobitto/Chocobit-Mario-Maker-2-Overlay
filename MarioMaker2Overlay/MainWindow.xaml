@@ -5,18 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MarioMaker2Overlay"
         mc:Ignorable="d"
-        Title="MainWindow" Name="Window" Height="230" Width="850" Background="#fef3d5" ResizeMode="NoResize" WindowStartupLocation="Manual" MouseDown="Window_MouseDown" Left="600" Top="60" >
+        Title="MainWindow" Name="Window" Background="#fef3d5" ResizeMode="NoResize" WindowStartupLocation="Manual" MouseDown="Window_MouseDown" Left="600" Top="60" SizeToContent="WidthAndHeight">
     <Grid>
-        <TextBox  HorizontalAlignment="Left" CharacterCasing="Upper" Margin="83,101,0,0" Name="LevelCode" Text="HYP-X4W-6HG" TextWrapping="NoWrap" VerticalAlignment="Top" Width="174" KeyUp="LevelCode_KeyUp" />
-        <StackPanel Margin="10,10,10,10">
+        <StackPanel Margin="0,0,10,0" VerticalAlignment="Top" Width="1914">
             <DockPanel VerticalAlignment="Top">
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0,0,0,0">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,0">
                     <StackPanel.Resources>
                         <Style TargetType="{x:Type StackPanel}">
                             <Setter Property="Margin" Value="8,0,0,0"/>
                         </Style>
                     </StackPanel.Resources>
-                    <Label x:Name="LabelLevelName" Content="Mario's Chalet (Expert)" Padding="0" FontSize="16" MaxWidth="300"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Label x:Name="LabelLevelName" Content="Mario's Chalet" Padding="0" FontSize="20" MaxWidth="300" VerticalAlignment="Center"/>
+                        <Label x:Name="LabelDifficultyName" Content="(expert)" Padding="0" FontSize="16" MaxWidth="300" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Image Height="13" Width="20" Source="/Assets/Images/like.png"/>
                         <Label x:Name="LabelLikes" Grid.Column="1" Content="1000" HorizontalAlignment="Left" Padding="0" VerticalAlignment="Center" FontSize="16"/>
@@ -30,8 +32,15 @@
                         <Label x:Name="LabelClears" Content="3/100 (33%)" Padding="0" VerticalAlignment="Center" FontSize="16"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <Image Height="15" Width="16" Source="/Assets/Images/world record.png"/>
+                        <Image Height="15" Width="20" Source="/Assets/Images/world record.png"/>
                         <Label x:Name="LabelWorldRecord" Content="00:21:57" Padding="0" VerticalAlignment="Center" FontSize="16"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Image HorizontalAlignment="Left" Height="10" VerticalAlignment="Center" Width="16" Source="/Assets/Images/Tag Icon.png"/>
+                        <Label x:Name="LabelFirstTag" Content="Standard, Themed" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" FontSize="16"/>
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBox CharacterCasing="Upper" Name="LevelCode" Text="HYP-X4W-6HG" TextWrapping="NoWrap" Width="85" KeyUp="LevelCode_KeyUp" Margin="0,5,0,0" />
                     </StackPanel>
                 </StackPanel>
                 <DockPanel DockPanel.Dock="Right" >
@@ -45,19 +54,13 @@
                         <Image DockPanel.Dock="Right" Height="15" Width="20" Source="/Assets/Images/timer.png"/>
                     </DockPanel>
                     <DockPanel DockPanel.Dock="Right">
-                        <Label DockPanel.Dock="Right" HorizontalAlignment="Left" Content="(100%)" x:Name="LabelCalculatedWinRate" VerticalAlignment="Center" Padding="0" FontSize="16"/>
-                        <Label DockPanel.Dock="Right" HorizontalAlignment="Left" Content="999" Name="LabelDeathCount" VerticalAlignment="Center" Padding="0" FontSize="16"/>
+                        <Label DockPanel.Dock="Right" HorizontalAlignment="Left" Content="(100%)" x:Name="LabelCalculatedWinRate" VerticalAlignment="Center" Padding="0" FontSize="16" Margin="5,0,0,0"/>
+                        <Label DockPanel.Dock="Right" HorizontalAlignment="Left" Content="0" Name="LabelDeathCount" VerticalAlignment="Center" Padding="0" FontSize="16"/>
                         <Image DockPanel.Dock="Right" Height="15" Width="20" Source="/Assets/Images/deaths.png"/>
                     </DockPanel>
                     <Label></Label>
                 </DockPanel>
             </DockPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
-                <StackPanel Orientation="Horizontal">
-                    <Image HorizontalAlignment="Left" Height="10" VerticalAlignment="Center" Width="16" Source="/Assets/Images/Tag Icon.png"/>
-                    <Label x:Name="LabelFirstTag" Content="Standard, Themed" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="0" FontSize="16"/>
-                </StackPanel>
-            </StackPanel>
         </StackPanel>
     </Grid>
 </Window>

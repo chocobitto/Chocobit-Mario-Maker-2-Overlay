@@ -95,7 +95,7 @@ namespace MarioMaker2Overlay
         {
             LabelDeathCount.Content = $"{_levelData.PlayerDeaths}";
             _levelData.Code = LevelCode.Text;
-            WinRate();
+            CalculateWinRate();
         }
 
         public void Dispose()
@@ -111,7 +111,7 @@ namespace MarioMaker2Overlay
             }
         }
 
-        public void WinRate()
+        public void CalculateWinRate()
         {
             decimal attempts = _levelData.PlayerDeaths + 1;
 
@@ -119,11 +119,11 @@ namespace MarioMaker2Overlay
             {
                 decimal winrate = 1 / attempts * 100;
 
-                //Winrate.Content = $"WR: {winrate:f2}%";
+                LabelCalculatedWinRate.Content = $"{winrate:f2}%";
             }
             else
             {
-                //Winrate.Content = string.Empty;
+                LabelCalculatedWinRate.Content = string.Empty;
             }
         }
 
@@ -208,11 +208,18 @@ namespace MarioMaker2Overlay
                 MarioMakerLevelData levelData = await _nintendoServiceClient.GetLevelInfo(levelCode.Replace("-", string.Empty));
 
                 LabelClears.Content = $"{levelData.Clears}/{levelData.Attempts} ({levelData.ClearRate})";
-                LabelFirstTag.Content = string.Join(", ", levelData) ?? "--";
-                LabelLevelName.Content = $"{levelData.Name} ({levelData.DifficultyName})";;
+                LabelFirstTag.Content = string.Join(", ", levelData.TagsName) ?? "--";
+                LabelLevelName.Content = $"{levelData.Name}";
+                LabelDifficultyName.Content = $"({levelData.DifficultyName})";
                 LabelLikes.Content = levelData.Likes;
                 LabelBoos.Content = levelData.Boos;
                 LabelWorldRecord.Content = $"{levelData.WorldRecord}";
+
+                // reset deaths and timer
+                _levelData = new LevelData { Code = LevelCode.Text, PlayerDeaths = 0, TotalGlobalAttempts = levelData.Attempts, TotalGlobalClears = levelData.Clears };
+                _stopwatch.Restart();
+
+                UpdateUi();
             }
         }
 
