@@ -16,24 +16,24 @@
                         </Style>
                     </StackPanel.Resources>
                     <StackPanel Orientation="Horizontal">
-                        <Label x:Name="LabelLevelName" Content="Mario's Chalet" Padding="0" FontSize="20" MaxWidth="300" VerticalAlignment="Center"/>
-                        <Label x:Name="LabelDifficultyName" Content="(expert)" Padding="0" FontSize="16" MaxWidth="300" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                        <Label x:Name="LabelLevelName" Content="---" Padding="0" FontSize="20" MaxWidth="300" VerticalAlignment="Center"/>
+                        <Label x:Name="LabelDifficultyName" Content="(---)" Padding="0" FontSize="16" MaxWidth="300" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Image Height="13" Width="20" Source="/Assets/Images/like.png"/>
-                        <Label x:Name="LabelLikes" Grid.Column="1" Content="1000" HorizontalAlignment="Left" Padding="0" VerticalAlignment="Center" FontSize="16"/>
+                        <Label x:Name="LabelLikes" Grid.Column="1" Content="-" HorizontalAlignment="Left" Padding="0" VerticalAlignment="Center" FontSize="16"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Image Height="12" Width="20" Source="/Assets/Images/boo.png"/>
-                        <Label x:Name="LabelBoos" Content="10" Padding="0" VerticalAlignment="Center" FontSize="16"/>
+                        <Label x:Name="LabelBoos" Content="-" Padding="0" VerticalAlignment="Center" FontSize="16"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Image Height="15" Width="16" Source="/Assets/Images/clears.png"/>
-                        <Label x:Name="LabelClears" Content="3/100 (33%)" Padding="0" VerticalAlignment="Center" FontSize="16"/>
+                        <Label x:Name="LabelClears" Content="???/??? (00%)" Padding="0" VerticalAlignment="Center" FontSize="16"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Image Height="15" Width="20" Source="/Assets/Images/world record.png"/>
-                        <Label x:Name="LabelWorldRecord" Content="00:21:57" Padding="0" VerticalAlignment="Center" FontSize="16"/>
+                        <Label x:Name="LabelWorldRecord" Content="00:00:00" Padding="0" VerticalAlignment="Center" FontSize="16"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Image HorizontalAlignment="Left" Height="10" VerticalAlignment="Center" Width="16" Source="/Assets/Images/Tag Icon.png"/>
@@ -50,7 +50,7 @@
                         </Style>
                     </DockPanel.Resources>
                     <DockPanel DockPanel.Dock="Right">
-                        <Label DockPanel.Dock="Right" x:Name="GameTime" Content="00:01:33" FontSize="16" VerticalAlignment="Center" Padding="0"/>
+                        <Label DockPanel.Dock="Right" x:Name="GameTime" Content="00:00:00" FontSize="16" VerticalAlignment="Center" Padding="0"/>
                         <Image DockPanel.Dock="Right" Height="15" Width="20" Source="/Assets/Images/timer.png"/>
                     </DockPanel>
                     <DockPanel DockPanel.Dock="Right">
