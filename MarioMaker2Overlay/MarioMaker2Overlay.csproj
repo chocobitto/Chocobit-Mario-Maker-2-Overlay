@@ -13,6 +13,7 @@
     <None Remove="Assets\Images\deaths.png" />
     <None Remove="Assets\Images\like.png" />
     <None Remove="Assets\Images\Tag Icon.png" />
+    <None Remove="Assets\Images\timer.png" />
     <None Remove="Assets\Images\world record.png" />
   </ItemGroup>
 
@@ -34,6 +35,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\Images\Tag Icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Images\timer.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\Images\world record.png">

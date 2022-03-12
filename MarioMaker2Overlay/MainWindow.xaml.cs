@@ -165,10 +165,8 @@ namespace MarioMaker2Overlay
         {
             Dispatcher.Invoke(() =>
             {
-                GameTime.Content = $"Time: {_stopwatch.Elapsed.ToString("hh\\:mm\\:ss\\.ff")}";
-            });
-
-            
+                GameTime.Content = $"{_stopwatch.Elapsed.ToString("hh\\:mm\\:ss\\.ff")}";
+            });            
         }
 
         private void Button_ClickGetData(object sender, RoutedEventArgs e)
@@ -210,8 +208,7 @@ namespace MarioMaker2Overlay
                 MarioMakerLevelData levelData = await _nintendoServiceClient.GetLevelInfo(levelCode.Replace("-", string.Empty));
 
                 LabelClears.Content = $"{levelData.Clears}/{levelData.Attempts} ({levelData.ClearRate})";
-                LabelFirstTag.Content = levelData.TagsName.First() ?? "--";
-                LabelSecondTag.Content = levelData.TagsName.Last() ?? "--";
+                LabelFirstTag.Content = string.Join(", ", levelData) ?? "--";
                 LabelLevelName.Content = $"{levelData.Name} ({levelData.DifficultyName})";;
                 LabelLikes.Content = levelData.Likes;
                 LabelBoos.Content = levelData.Boos;
