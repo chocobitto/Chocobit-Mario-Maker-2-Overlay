@@ -163,10 +163,13 @@ namespace MarioMaker2Overlay
 
         private void CurrentTimeElapsed(object? sender, ElapsedEventArgs e)
         {
-            Dispatcher.Invoke(() =>
+            if (!string.IsNullOrWhiteSpace(_levelData.Code) && IsValidLevelCode(_levelData.Code))
             {
-                GameTime.Content = $"{_stopwatch.Elapsed.ToString("hh\\:mm\\:ss\\.ff")}";
-            });            
+                Dispatcher.Invoke(() =>
+                {
+                    GameTime.Content = $"{_stopwatch.Elapsed.ToString("hh\\:mm\\:ss\\.ff")}";
+                });
+            }                        
         }
 
         private void Button_ClickGetData(object sender, RoutedEventArgs e)
@@ -201,26 +204,42 @@ namespace MarioMaker2Overlay
         {
             string levelCode = LevelCode.Text;
 
-            if (Regex.IsMatch(LevelCode.Text, "[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]-[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]-[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]"))
+            if (IsValidLevelCode(levelCode))
             {
-                _levelData.Code = LevelCode.Text;
 
-                MarioMakerLevelData levelData = await _nintendoServiceClient.GetLevelInfo(levelCode.Replace("-", string.Empty));
+                try
+                {
+                    MarioMakerLevelData levelData = await _nintendoServiceClient.GetLevelInfo(levelCode.Replace("-", string.Empty));
 
-                LabelClears.Content = $"{levelData.Clears}/{levelData.Attempts} ({levelData.ClearRate})";
-                LabelFirstTag.Content = string.Join(", ", levelData.TagsName) ?? "--";
-                LabelLevelName.Content = $"{levelData.Name}";
-                LabelDifficultyName.Content = $"({levelData.DifficultyName})";
-                LabelLikes.Content = levelData.Likes;
-                LabelBoos.Content = levelData.Boos;
-                LabelWorldRecord.Content = $"{levelData.WorldRecord}";
+                    LabelClears.Content = $"{levelData.Clears}/{levelData.Attempts} ({levelData.ClearRate})";
+                    LabelFirstTag.Content = string.Join(", ", levelData.TagsName) ?? "--";
+                    LabelLevelName.Content = $"{levelData.Name}";
+                    LabelDifficultyName.Content = $"({levelData.DifficultyName})";
+                    LabelLikes.Content = levelData.Likes;
+                    LabelBoos.Content = levelData.Boos;
+                    LabelWorldRecord.Content = $"{levelData.WorldRecord}";
 
-                // reset deaths and timer
-                _levelData = new LevelData { Code = LevelCode.Text, PlayerDeaths = 0, TotalGlobalAttempts = levelData.Attempts, TotalGlobalClears = levelData.Clears };
+                    // reset deaths and timer
+                    _levelData.Code = LevelCode.Text;
+                    _levelData.TotalGlobalAttempts = levelData.Attempts;
+                    _levelData.TotalGlobalClears = levelData.Clears;
+                }
+                catch (Exception ex) { }
+
+                // reset deaths and timer for now until we're getting this
+                // from the DB
                 _stopwatch.Restart();
+                _levelData.PlayerDeaths = 0;
 
                 UpdateUi();
             }
+        }
+
+        private bool IsValidLevelCode(string levelCode)
+        {
+            bool result = Regex.IsMatch(levelCode, "[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]-[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]-[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]");
+
+            return result;
         }
 
         //private void Button_Click(object sender, RoutedEventArgs e)

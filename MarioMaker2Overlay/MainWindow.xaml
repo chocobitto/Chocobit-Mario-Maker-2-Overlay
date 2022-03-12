@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MarioMaker2Overlay"
         mc:Ignorable="d"
         Title="MainWindow" Name="Window" Background="#fef3d5" ResizeMode="NoResize" WindowStartupLocation="Manual" MouseDown="Window_MouseDown" Left="600" Top="60" SizeToContent="WidthAndHeight">
     <Grid>
@@ -29,7 +28,7 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Image Height="15" Width="16" Source="/Assets/Images/clears.png"/>
-                        <Label x:Name="LabelClears" Content="???/??? (00%)" Padding="0" VerticalAlignment="Center" FontSize="16"/>
+                        <Label x:Name="LabelClears" Content="---/--- (0%)" Padding="0" VerticalAlignment="Center" FontSize="16"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Image Height="15" Width="20" Source="/Assets/Images/world record.png"/>
@@ -37,7 +36,7 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Image HorizontalAlignment="Left" Height="10" VerticalAlignment="Center" Width="16" Source="/Assets/Images/Tag Icon.png"/>
-                        <Label x:Name="LabelFirstTag" Content="Standard, Themed" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" FontSize="16"/>
+                        <Label x:Name="LabelFirstTag" Content="--, --" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" FontSize="16"/>
                     </StackPanel>
                     <StackPanel>
                         <TextBox CharacterCasing="Upper" Name="LevelCode" Text="HYP-X4W-6HG" TextWrapping="NoWrap" Width="85" KeyUp="LevelCode_KeyUp" Margin="0,5,0,0" />
