@@ -8,7 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Images\boo.png" />
+    <None Remove="Assets\Images\clears.png" />
+    <None Remove="Assets\Images\deaths.png" />
+    <None Remove="Assets\Images\like.png" />
     <None Remove="Assets\Images\Tag Icon.png" />
+    <None Remove="Assets\Images\world record.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -16,9 +21,24 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\Images\Tag Icon.png">
+    <Content Include="Assets\Images\boo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </Content>
+    <Content Include="Assets\Images\clears.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Images\deaths.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Images\like.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Images\Tag Icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Images\world record.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

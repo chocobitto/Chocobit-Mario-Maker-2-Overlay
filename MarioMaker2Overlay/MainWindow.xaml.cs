@@ -51,25 +51,15 @@ namespace MarioMaker2Overlay
         private void TryUpdateLevelData(object? sender, ElapsedEventArgs e)
         {
             // Check to see if the data exists
-            if(_levelData?.LevelDataId > 0)
+            if(_levelData?.LevelDataId > 0 || !string.IsNullOrWhiteSpace(_levelData?.Code))
             {
-                // if it exist update it
+                // if it exists update it
                 Persistence.LevelData levelData;
 
                 levelData = LocalToDb();
 
-                _levelDataRepository.Update(levelData);
+                _levelDataRepository.Upsert(levelData);
             }
-            else if(!string.IsNullOrWhiteSpace(_levelData?.Code))
-            {
-                // if not insert it
-                Persistence.LevelData levelData;
-
-                levelData = LocalToDb();
-
-                _levelDataRepository.Insert(levelData);
-            }
-
         }
 
         public void SetupKeyboardHooks()
@@ -103,7 +93,7 @@ namespace MarioMaker2Overlay
 
         private void UpdateUi()
         {
-            DeathCount.Content = $"Deaths: {_levelData.PlayerDeaths}";
+            LabelDeathCount.Content = $"{_levelData.PlayerDeaths}";
             _levelData.Code = LevelCode.Text;
             WinRate();
         }
@@ -145,7 +135,7 @@ namespace MarioMaker2Overlay
 
             levelData = LocalToDb();
 
-            _levelDataRepository.Update(levelData);
+            _levelDataRepository.Upsert(levelData);
         }
 
         private void Button_ClickInsert(object sender, RoutedEventArgs e)
@@ -219,13 +209,13 @@ namespace MarioMaker2Overlay
 
                 MarioMakerLevelData levelData = await _nintendoServiceClient.GetLevelInfo(levelCode.Replace("-", string.Empty));
 
-                LabelClears.Content = $"Clears: {levelData.Clears}/{levelData.Attempts} ({levelData.ClearRate})";
+                LabelClears.Content = $"{levelData.Clears}/{levelData.Attempts} ({levelData.ClearRate})";
                 LabelFirstTag.Content = levelData.TagsName.First() ?? "--";
                 LabelSecondTag.Content = levelData.TagsName.Last() ?? "--";
                 LabelLevelName.Content = $"{levelData.Name} ({levelData.DifficultyName})";;
                 LabelLikes.Content = levelData.Likes;
                 LabelBoos.Content = levelData.Boos;
-                LabelWorldRecord.Content = $"World Record: {levelData.WorldRecord}";
+                LabelWorldRecord.Content = $"{levelData.WorldRecord}";
             }
         }
 

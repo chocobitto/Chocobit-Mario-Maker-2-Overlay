@@ -33,6 +33,30 @@ namespace MarioMaker2Overlay.Persistence
             return result;
         }
 
+        public void Upsert(LevelData levelData)
+        {
+            using (MarioMaker2OverlayContext context = new())
+            {
+                LevelData? current = context.LevelData
+                    .Where(a => a.Code == levelData.Code)
+                    .FirstOrDefault();
+
+                if (current?.LevelDataId == 0)
+                {
+                    context.LevelData.Add(levelData);
+                }
+                else if (current != null)
+                {
+                    current.PlayerDeaths = levelData.PlayerDeaths;
+
+                    //copy data from passed levelData object
+                    //onto "current"
+                }
+
+                context.SaveChanges();
+            }
+        }
+
         public void Update(LevelData levelData)
         {
             using (MarioMaker2OverlayContext context = new())
@@ -47,7 +71,6 @@ namespace MarioMaker2Overlay.Persistence
 
                 context.SaveChanges();
             }
-
         }
 
     }
