@@ -41,16 +41,16 @@ namespace MarioMaker2Overlay.Persistence
                     .Where(a => a.Code == levelData.Code)
                     .FirstOrDefault();
 
-                if (current?.LevelDataId == 0)
+                if (current?.LevelDataId == null)
                 {
                     context.LevelData.Add(levelData);
                 }
                 else if (current != null)
                 {
                     current.PlayerDeaths = levelData.PlayerDeaths;
-
-                    //copy data from passed levelData object
-                    //onto "current"
+                    current.TimeElapsed = levelData.TimeElapsed;
+                    current.TotalGlobalAttempts = levelData.TotalGlobalAttempts;
+                    current.TotalGlobalClears = levelData.TotalGlobalClears;
                 }
 
                 context.SaveChanges();

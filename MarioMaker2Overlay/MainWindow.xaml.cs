@@ -1,59 +1,51 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
+using System.ComponentModel;
 using System.Net.Http;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Timers;
 using System.Windows;
-using System.Xml;
-using System.Xml.Serialization;
 using MarioMaker2Overlay.Persistence;
 using MarioMaker2Overlay.Services;
+using MarioMaker2Overlay.Utility;
 using SnagFree.TrayApp.Core;
-
 
 namespace MarioMaker2Overlay
 {
     public partial class MainWindow : Window
     {
-        private Timer _updateDatabaseTimer;
+        private Timer _updateDatabaseTimer = new Timer(5000);
         private GlobalKeyboardHook _globalKeyboardHook;
         private LevelData _levelData = new();
         private LevelDataRepository _levelDataRepository = new();
         private NintendoServiceClient _nintendoServiceClient = new(new HttpClient());
-        private Timer _gameTimer;
+        private Timer _gameTimer = new Timer(20);
         public decimal _time;
-        private Stopwatch _stopwatch = new();
+        private OurStopwatch _stopwatch = new();
         
         public MainWindow()
         {
             InitializeComponent();
             SetupKeyboardHooks();
+            InitializeAllFieldsToDefaults();
 
             WindowStyle = WindowStyle.None;
 
-            _gameTimer = new Timer(20);
             _gameTimer.Elapsed += CurrentTimeElapsed;
             _gameTimer.Enabled = true;
 
-            _stopwatch.Start();
-
-            _updateDatabaseTimer = new Timer(5000);
-            _updateDatabaseTimer.Elapsed += TryUpdateLevelData;
+            _updateDatabaseTimer.Elapsed += TryUpsertLevel;
             _updateDatabaseTimer.Enabled = true;
-
-            InitializeAllFieldsToDefaults();
         }
         
-        private void TryUpdateLevelData(object? sender, ElapsedEventArgs e)
+        private void TryUpsertLevel(object? sender, ElapsedEventArgs e)
+        {
+            Upsert();
+        }
+
+        private void Upsert()
         {
             // Check to see if the data exists
-            if(_levelData?.LevelDataId > 0 || !string.IsNullOrWhiteSpace(_levelData?.Code))
+            if (_levelData?.LevelDataId > 0 || !string.IsNullOrWhiteSpace(_levelData?.Code))
             {
                 // if it exists update it
                 Persistence.LevelData levelData;
@@ -62,6 +54,17 @@ namespace MarioMaker2Overlay
 
                 _levelDataRepository.Upsert(levelData);
             }
+        }
+
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            _gameTimer.Stop();
+            _updateDatabaseTimer.Stop();
+
+            Upsert();
+
+            base.OnClosing(e);
         }
 
         public void SetupKeyboardHooks()
@@ -153,14 +156,11 @@ namespace MarioMaker2Overlay
         {
             Persistence.LevelData data = new();
 
-
-            _levelData.TimeElapsed = _stopwatch.Elapsed.Duration();
-
             data.Code = _levelData.Code;
             data.PlayerDeaths = _levelData.PlayerDeaths;
             data.TotalGlobalAttempts = _levelData.TotalGlobalAttempts;
             data.TotalGlobalClears = _levelData.TotalGlobalClears;
-            data.TimeElapsed = _levelData.TimeElapsed;
+            data.TimeElapsed = _stopwatch.ElapsedTicks;
 
             return data;
         }
@@ -204,42 +204,6 @@ namespace MarioMaker2Overlay
             }
         }
 
-        private async void LevelCode_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            string levelCode = LevelCode.Text;
-
-            if (IsValidLevelCode(levelCode))
-            {
-
-                try
-                {
-                    MarioMakerLevelData levelData = await _nintendoServiceClient.GetLevelInfo(levelCode.Replace("-", string.Empty));
-
-                    LabelClears.Content = $"{levelData.Clears}/{levelData.Attempts} ({levelData.ClearRate})";
-                    LabelTags.Content = string.Join(", ", levelData.TagsName) ?? "--";
-                    LabelLevelName.Content = $"{levelData.Name}";
-                    LabelDifficultyName.Content = $"({levelData.DifficultyName})";
-                    LabelLikes.Content = levelData.Likes;
-                    LabelBoos.Content = levelData.Boos;
-                    LabelWorldRecord.Content = $"{levelData.WorldRecord}";
-
-                    // reset deaths and timer
-                    _levelData.Code = LevelCode.Text;
-                    _levelData.TotalGlobalAttempts = levelData.Attempts;
-                    _levelData.TotalGlobalClears = levelData.Clears;
-                }
-                catch (Exception ex) 
-                {
-                    InitializeAllFieldsToDefaults();
-                }
-
-                // reset deaths and timer for now until we're getting this
-                // from the DB
-
-                UpdateUi();
-            }
-        }
-
         private void InitializeAllFieldsToDefaults()
         {
             LabelLevelName.Content = "---";
@@ -261,31 +225,69 @@ namespace MarioMaker2Overlay
             return result;
         }
 
-        private void LevelCode_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private async void LevelCode_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            
+        }
+
+        private async void LevelCode_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             string levelCode = LevelCode.Text;
 
             if (IsValidLevelCode(levelCode))
             {
-                Persistence.LevelData data;
+                // disable our DB upsert for a bit
+                _updateDatabaseTimer.Stop();
 
-                data = _levelDataRepository.GetByLevelCode(levelCode);
-
-                if (data != null)
+                try
                 {
-                    _stopwatch.Elapsed.Add(_levelData.TimeElapsed);
-                    _levelData.PlayerDeaths = data.PlayerDeaths;
-                }
-                else
-                {
-                    Persistence.LevelData levelDataInsert;
+                    // store the most recent version of the current
+                    // level to the DB first
+                    Upsert();
 
-                    levelDataInsert = LocalToDb();
+                    try
+                    {
+                        MarioMakerLevelData levelData = await _nintendoServiceClient.GetLevelInfo(levelCode.Replace("-", string.Empty));
 
-                    _levelDataRepository.Insert(levelDataInsert);
+                        LabelClears.Content = $"{levelData.Clears}/{levelData.Attempts} ({levelData.ClearRate})";
+                        LabelTags.Content = string.Join(", ", levelData.TagsName) ?? "--";
+                        LabelLevelName.Content = $"{levelData.Name}";
+                        LabelDifficultyName.Content = $"({levelData.DifficultyName})";
+                        LabelLikes.Content = levelData.Likes;
+                        LabelBoos.Content = levelData.Boos;
+                        LabelWorldRecord.Content = $"{levelData.WorldRecord}";
+
+                        // reset deaths and timer
+                        _levelData.Code = LevelCode.Text;
+                        _levelData.TotalGlobalAttempts = levelData.Attempts;
+                        _levelData.TotalGlobalClears = levelData.Clears;
+                    }
+                    catch (Exception ex)
+                    {
+                        InitializeAllFieldsToDefaults();
+                    }
 
                     _stopwatch.Restart();
-                    _levelData.PlayerDeaths = 0;
+
+                    // reset deaths and timer for now until we're getting this
+                    // from the DB
+                    Persistence.LevelData data;
+
+                    data = _levelDataRepository.GetByLevelCode(levelCode);
+
+                    if (data != null)
+                    {
+                        TimeSpan elapsedFromDb = new TimeSpan(data.TimeElapsed);
+
+                        _stopwatch.Start(elapsedFromDb);
+                        _levelData.PlayerDeaths = data.PlayerDeaths;
+                    }
+
+                    UpdateUi();
+                }
+                finally
+                {
+                    _updateDatabaseTimer.Start();
                 }
             }
         }

@@ -26,6 +26,6 @@ namespace MarioMaker2Overlay.Persistence
 
         public int TotalGlobalAttempts { get; set; }
 
-        public TimeSpan TimeElapsed { get; set; }
+        public long TimeElapsed { get; set; }
     }
 }

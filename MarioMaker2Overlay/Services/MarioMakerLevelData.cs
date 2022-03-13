@@ -26,7 +26,7 @@ namespace MarioMaker2Overlay.Services
 		[JsonPropertyName("clear_rate")]
 		public string ClearRate { get; set; }
 
-		[JsonPropertyName("int")]
+		[JsonPropertyName("likes")]
 		public int Likes { get; set; }
 
 		[JsonPropertyName("boos")]
