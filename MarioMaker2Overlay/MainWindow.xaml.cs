@@ -46,6 +46,8 @@ namespace MarioMaker2Overlay
             _updateDatabaseTimer = new Timer(5000);
             _updateDatabaseTimer.Elapsed += TryUpdateLevelData;
             _updateDatabaseTimer.Enabled = true;
+
+            InitializeAllFieldsToDefaults();
         }
         
         private void TryUpdateLevelData(object? sender, ElapsedEventArgs e)
@@ -85,9 +87,7 @@ namespace MarioMaker2Overlay
                             UpdateUi();
                         }
                         break;
-
                 }
-
             }
         }
 
@@ -167,7 +167,7 @@ namespace MarioMaker2Overlay
             {
                 Dispatcher.Invoke(() =>
                 {
-                    GameTime.Content = $"{_stopwatch.Elapsed.ToString("hh\\:mm\\:ss\\.ff")}";
+                    LabelGameTime.Content = $"{_stopwatch.Elapsed.ToString("hh\\:mm\\:ss\\.ff")}";
                 });
             }                        
         }
@@ -212,7 +212,7 @@ namespace MarioMaker2Overlay
                     MarioMakerLevelData levelData = await _nintendoServiceClient.GetLevelInfo(levelCode.Replace("-", string.Empty));
 
                     LabelClears.Content = $"{levelData.Clears}/{levelData.Attempts} ({levelData.ClearRate})";
-                    LabelFirstTag.Content = string.Join(", ", levelData.TagsName) ?? "--";
+                    LabelTags.Content = string.Join(", ", levelData.TagsName) ?? "--";
                     LabelLevelName.Content = $"{levelData.Name}";
                     LabelDifficultyName.Content = $"({levelData.DifficultyName})";
                     LabelLikes.Content = levelData.Likes;
@@ -224,7 +224,10 @@ namespace MarioMaker2Overlay
                     _levelData.TotalGlobalAttempts = levelData.Attempts;
                     _levelData.TotalGlobalClears = levelData.Clears;
                 }
-                catch (Exception ex) { }
+                catch (Exception ex) 
+                {
+                    InitializeAllFieldsToDefaults();
+                }
 
                 // reset deaths and timer for now until we're getting this
                 // from the DB
@@ -233,6 +236,20 @@ namespace MarioMaker2Overlay
 
                 UpdateUi();
             }
+        }
+
+        private void InitializeAllFieldsToDefaults()
+        {
+            LabelLevelName.Content = "---";
+            LabelDifficultyName.Content = "(---)";
+            LabelLikes.Content = "-";
+            LabelBoos.Content = "-";
+            LabelClears.Content = "---/--- (0%)";
+            LabelWorldRecord.Content = "00:00:00";
+            LabelTags.Content = "--, --";
+            LabelGameTime.Content = "00:00:00";
+            LabelCalculatedWinRate.Content = "(100%)";
+            LabelDeathCount.Content = "0";
         }
 
         private bool IsValidLevelCode(string levelCode)

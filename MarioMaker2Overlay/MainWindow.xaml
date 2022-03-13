@@ -15,7 +15,7 @@
                         </Style>
                     </StackPanel.Resources>
                     <StackPanel Orientation="Horizontal">
-                        <Label x:Name="LabelLevelName" Content="---" Padding="0" FontSize="20" MaxWidth="300" VerticalAlignment="Center"/>
+                        <Label x:Name="LabelLevelName" Content="Mario's Chateau" Padding="0" FontSize="22" MaxWidth="300" VerticalAlignment="Center"/>
                         <Label x:Name="LabelDifficultyName" Content="(---)" Padding="0" FontSize="16" MaxWidth="300" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
@@ -36,7 +36,7 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Image HorizontalAlignment="Left" Height="10" VerticalAlignment="Center" Width="16" Source="/Assets/Images/Tag Icon.png"/>
-                        <Label x:Name="LabelFirstTag" Content="--, --" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" FontSize="16"/>
+                        <Label x:Name="LabelTags" Content="--, --" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" FontSize="16"/>
                     </StackPanel>
                     <StackPanel>
                         <TextBox CharacterCasing="Upper" Name="LevelCode" Text="HYP-X4W-6HG" TextWrapping="NoWrap" Width="85" KeyUp="LevelCode_KeyUp" Margin="0,5,0,0" />
@@ -49,7 +49,7 @@
                         </Style>
                     </DockPanel.Resources>
                     <DockPanel DockPanel.Dock="Right">
-                        <Label DockPanel.Dock="Right" x:Name="GameTime" Content="00:00:00" FontSize="16" VerticalAlignment="Center" Padding="0"/>
+                        <Label DockPanel.Dock="Right" x:Name="LabelGameTime" Content="00:00:00" FontSize="16" VerticalAlignment="Center" Padding="0"/>
                         <Image DockPanel.Dock="Right" Height="15" Width="20" Source="/Assets/Images/timer.png"/>
                     </DockPanel>
                     <DockPanel DockPanel.Dock="Right">
