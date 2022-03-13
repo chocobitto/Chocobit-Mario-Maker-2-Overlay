@@ -39,7 +39,7 @@
                         <Label x:Name="LabelTags" Content="--, --" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" FontSize="16"/>
                     </StackPanel>
                     <StackPanel>
-                        <TextBox CharacterCasing="Upper" Name="LevelCode" Text="HYP-X4W-6HG" TextWrapping="NoWrap" Width="85" KeyUp="LevelCode_KeyUp" Margin="0,5,0,0" />
+                        <TextBox CharacterCasing="Upper" Name="LevelCode" Text="HYP-X4W-6HG" TextWrapping="NoWrap" Width="85" KeyUp="LevelCode_KeyUp" Margin="0,5,0,0" TextChanged="LevelCode_TextChanged" />
                     </StackPanel>
                 </StackPanel>
                 <DockPanel DockPanel.Dock="Right" >

@@ -13,5 +13,6 @@ namespace MarioMaker2Overlay
         public int PlayerDeaths { get; set; }
         public int TotalGlobalClears { get; set; }
         public int TotalGlobalAttempts { get; set; }
+        public TimeSpan TimeElapsed { get; set; }
     }
 }
