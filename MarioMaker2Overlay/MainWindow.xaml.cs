@@ -16,6 +16,7 @@ using MarioMaker2Overlay.Persistence;
 using MarioMaker2Overlay.Services;
 using SnagFree.TrayApp.Core;
 
+
 namespace MarioMaker2Overlay
 {
     public partial class MainWindow : Window
@@ -28,8 +29,7 @@ namespace MarioMaker2Overlay
         private Timer _gameTimer;
         public decimal _time;
         private Stopwatch _stopwatch = new();
-
-
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -153,10 +153,14 @@ namespace MarioMaker2Overlay
         {
             Persistence.LevelData data = new();
 
+
+            _levelData.TimeElapsed = _stopwatch.Elapsed.Duration();
+
             data.Code = _levelData.Code;
             data.PlayerDeaths = _levelData.PlayerDeaths;
             data.TotalGlobalAttempts = _levelData.TotalGlobalAttempts;
             data.TotalGlobalClears = _levelData.TotalGlobalClears;
+            data.TimeElapsed = _levelData.TimeElapsed;
 
             return data;
         }
@@ -228,8 +232,6 @@ namespace MarioMaker2Overlay
 
                 // reset deaths and timer for now until we're getting this
                 // from the DB
-                _stopwatch.Restart();
-                _levelData.PlayerDeaths = 0;
 
                 UpdateUi();
             }
@@ -240,6 +242,35 @@ namespace MarioMaker2Overlay
             bool result = Regex.IsMatch(levelCode, "[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]-[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]-[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]");
 
             return result;
+        }
+
+        private void LevelCode_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            string levelCode = LevelCode.Text;
+
+            if (IsValidLevelCode(levelCode))
+            {
+                Persistence.LevelData data;
+
+                data = _levelDataRepository.GetByLevelCode(levelCode);
+
+                if (data != null)
+                {
+                    _stopwatch.Elapsed.Add(_levelData.TimeElapsed);
+                    _levelData.PlayerDeaths = data.PlayerDeaths;
+                }
+                else
+                {
+                    Persistence.LevelData levelDataInsert;
+
+                    levelDataInsert = LocalToDb();
+
+                    _levelDataRepository.Insert(levelDataInsert);
+
+                    _stopwatch.Restart();
+                    _levelData.PlayerDeaths = 0;
+                }
+            }
         }
 
         //private void Button_Click(object sender, RoutedEventArgs e)
