@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MarioMaker2Overlay.Utility
 {
-    internal class OurStopwatch
+    internal class StopwatchWithOffset
     {
         private Stopwatch _stopwatch = new Stopwatch();
         private TimeSpan _offset = TimeSpan.Zero;

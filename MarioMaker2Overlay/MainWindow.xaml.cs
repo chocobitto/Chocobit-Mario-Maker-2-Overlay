@@ -20,7 +20,7 @@ namespace MarioMaker2Overlay
         private NintendoServiceClient _nintendoServiceClient = new(new HttpClient());
         private Timer _gameTimer = new Timer(20);
         public decimal _time;
-        private OurStopwatch _stopwatch = new();
+        private StopwatchWithOffset _stopwatch = new();
         
         public MainWindow()
         {
@@ -55,7 +55,6 @@ namespace MarioMaker2Overlay
                 _levelDataRepository.Upsert(levelData);
             }
         }
-
 
         protected override void OnClosing(CancelEventArgs e)
         {
