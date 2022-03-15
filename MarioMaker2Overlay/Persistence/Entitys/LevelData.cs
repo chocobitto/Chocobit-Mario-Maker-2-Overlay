@@ -18,7 +18,7 @@ namespace MarioMaker2Overlay.Persistence
         public int LevelDataId { get; set; }
 
         [StringLength(11)]
-        public string Code { get; set; }
+        public string? Code { get; set; }
 
         public int PlayerDeaths { get; set; }
 

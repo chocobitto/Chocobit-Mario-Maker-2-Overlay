@@ -2,10 +2,11 @@
 using System.ComponentModel;
 using System.Net.Http;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
+using MarioMaker2Overlay.Models;
 using MarioMaker2Overlay.Persistence;
-using MarioMaker2Overlay.Services;
 using MarioMaker2Overlay.Utility;
 using SnagFree.TrayApp.Core;
 
@@ -21,12 +22,26 @@ namespace MarioMaker2Overlay
         private Timer _gameTimer = new Timer(20);
         public decimal _time;
         private StopwatchWithOffset _stopwatch = new();
-        
+        private WebsocketClientHelper _websocketClientHelper = new WebsocketClientHelper();
+
         public MainWindow()
         {
             InitializeComponent();
             SetupKeyboardHooks();
             InitializeAllFieldsToDefaults();
+
+            _websocketClientHelper.LevelCodeChanged = (response) =>
+            {
+                if (response.Level != null)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        LevelCode.Text = response.Level.Code;
+                    });
+                }                
+            };
+
+            Task.Run(async () => await _websocketClientHelper.RunAsync());
 
             WindowStyle = WindowStyle.None;
 
@@ -155,7 +170,7 @@ namespace MarioMaker2Overlay
         {
             Persistence.LevelData data = new();
 
-            data.Code = _levelData.Code;
+            data.Code = _levelData.Code?.Replace("-", string.Empty);
             data.PlayerDeaths = _levelData.PlayerDeaths;
             data.TotalGlobalAttempts = _levelData.TotalGlobalAttempts;
             data.TotalGlobalClears = _levelData.TotalGlobalClears;
@@ -219,7 +234,7 @@ namespace MarioMaker2Overlay
 
         private bool IsValidLevelCode(string levelCode)
         {
-            bool result = Regex.IsMatch(levelCode, "[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]-[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]-[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]");
+            bool result = Regex.IsMatch(levelCode, "[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]-?[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]-?[0-9A-HJ-NP-Y][0-9A-HJ-NP-Y][0-9A-HJ-NP-Y]");
 
             return result;
         }
@@ -231,7 +246,7 @@ namespace MarioMaker2Overlay
 
         private async void LevelCode_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
-            string levelCode = LevelCode.Text;
+            string levelCode = LevelCode.Text?.Replace("-", string.Empty) ?? string.Empty;
 
             if (IsValidLevelCode(levelCode))
             {
@@ -246,7 +261,7 @@ namespace MarioMaker2Overlay
 
                     try
                     {
-                        MarioMakerLevelData levelData = await _nintendoServiceClient.GetLevelInfo(levelCode.Replace("-", string.Empty));
+                        MarioMakerLevelData levelData = await _nintendoServiceClient.GetLevelInfo(levelCode);
 
                         LabelClears.Content = $"{levelData.Clears}/{levelData.Attempts} ({levelData.ClearRate})";
                         LabelTags.Content = string.Join(", ", levelData.TagsName) ?? "--";

@@ -1,4 +1,4 @@
-﻿using MarioMaker2Overlay.Services;
+﻿using MarioMaker2Overlay.Models;
 using System.Net.Http;
 using System.Threading.Tasks;
 
