@@ -51,7 +51,7 @@ namespace MarioMaker2Overlay.Utility
                         }
                         catch (Exception ex)
                         {
-                            throw;
+                            //throw;
                         }
                     }
                 }
