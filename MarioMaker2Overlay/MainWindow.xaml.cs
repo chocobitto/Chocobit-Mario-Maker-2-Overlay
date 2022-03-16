@@ -30,7 +30,7 @@ namespace MarioMaker2Overlay
             SetupKeyboardHooks();
             InitializeAllFieldsToDefaults();
 
-            _websocketClientHelper.LevelCodeChanged = (response) =>
+            _websocketClientHelper.OnLevelCodeChanged = (response) =>
             {
                 if (response.Level != null)
                 {
@@ -39,6 +39,11 @@ namespace MarioMaker2Overlay
                         LevelCode.Text = response.Level.Code;
                     });
                 }                
+            };
+
+            _websocketClientHelper.OnMarioDeath = (response) =>
+            {
+                _levelData.PlayerDeaths++;
             };
 
             Task.Run(async () => await _websocketClientHelper.RunAsync());
@@ -282,6 +287,7 @@ namespace MarioMaker2Overlay
                     }
 
                     _stopwatch.Restart();
+                    _levelData.PlayerDeaths = 0;
 
                     // reset deaths and timer for now until we're getting this
                     // from the DB

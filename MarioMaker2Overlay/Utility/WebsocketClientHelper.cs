@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
@@ -12,26 +11,49 @@ namespace MarioMaker2Overlay.Utility
 {
     internal class WebsocketClientHelper
     {
-        public Action<MarioMaker2OcrModel>? LevelCodeChanged;
+        public Action<MarioMaker2OcrModel>? OnLevelCodeChanged;
+        public Action<MarioMaker2OcrModel>? OnMarioDeath;
 
         public async Task RunAsync()
         {
             CancellationTokenSource source = new CancellationTokenSource();
+
             using (var ws = new ClientWebSocket())
             {
                 await ws.ConnectAsync(new Uri("ws://localhost:3000/wss"), CancellationToken.None);
-                byte[] buffer = new byte[256];
                 while (ws.State == WebSocketState.Open)
                 {
-                    var result = await ws.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-                    if (result.MessageType == WebSocketMessageType.Close)
+
+                    ArraySegment<Byte> buffer = new ArraySegment<byte>(new Byte[8192]);
+                    WebSocketReceiveResult? result = null;
+
+                    using (var ms = new MemoryStream())
                     {
-                        await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+                        try
+                        {
+                            do
+                            {
+                                result = await ws.ReceiveAsync(buffer, CancellationToken.None);
+                                ms.Write(buffer.Array, buffer.Offset, result.Count);
+                            }
+                            while (!result.EndOfMessage);
+
+                            ms.Seek(0, SeekOrigin.Begin);
+
+                            if (result.MessageType == WebSocketMessageType.Close)
+                            {
+                                await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+                            }
+                            else
+                            {
+                                HandleMessage(ms.GetBuffer());
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            throw;
+                        }
                     }
-                    else
-                    {
-                        HandleMessage(buffer);
-                    } 
                 }
             }
         }
@@ -49,9 +71,13 @@ namespace MarioMaker2Overlay.Utility
 
                 MarioMaker2OcrModel? dataFromService = JsonSerializer.Deserialize<MarioMaker2OcrModel>(response);
 
-                if (LevelCodeChanged != null && dataFromService.Level != null)
+                if (OnLevelCodeChanged != null && dataFromService.Level != null)
                 {
-                    LevelCodeChanged(dataFromService);
+                    OnLevelCodeChanged(dataFromService);
+                }
+                else if (OnMarioDeath != null && (dataFromService?.Type.Equals("death", StringComparison.OrdinalIgnoreCase) ?? false))
+                {
+                    OnMarioDeath(dataFromService);
                 }
             }
             catch (Exception ex)
