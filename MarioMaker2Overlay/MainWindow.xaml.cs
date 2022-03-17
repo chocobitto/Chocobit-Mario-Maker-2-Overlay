@@ -30,6 +30,8 @@ namespace MarioMaker2Overlay
             SetupKeyboardHooks();
             InitializeAllFieldsToDefaults();
 
+            Topmost = true;
+
             _websocketClientHelper.OnLevelCodeChanged = (response) =>
             {
                 if (response.Level != null)
@@ -56,7 +58,7 @@ namespace MarioMaker2Overlay
             _updateDatabaseTimer.Elapsed += TryUpsertLevel;
             _updateDatabaseTimer.Enabled = true;
         }
-        
+
         private void TryUpsertLevel(object? sender, ElapsedEventArgs e)
         {
             Upsert();
