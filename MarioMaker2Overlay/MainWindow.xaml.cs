@@ -31,8 +31,6 @@ namespace MarioMaker2Overlay
             SetupKeyboardHooks();
             InitializeAllFieldsToDefaults();
 
-            Topmost = true;
-
             _websocketClientHelper.OnLevelCodeChanged = (response) =>
             {
                 if (response.Level != null)
@@ -129,6 +127,8 @@ namespace MarioMaker2Overlay
             LabelLikes.Content = _levelData.Likes;
             LabelBoos.Content = _levelData.Boos;
             LabelWorldRecord.Content = $"{_levelData.WorldRecord}";
+            LabelLikeRatio.Content = $"({_levelData.LikeRatio}:1)";
+            LabelClearCheckTime.Content = _levelData.ClearCheckTime;
 
             CalculateWinRate();
         }
@@ -226,6 +226,7 @@ namespace MarioMaker2Overlay
             LabelDifficultyName.Content = "(---)";
             LabelLikes.Content = "-";
             LabelBoos.Content = "-";
+            LabelLikeRatio.Content = "(1.0)";
             LabelClears.Content = "---/--- (0%)";
             LabelWorldRecord.Content = "00:00:00";
             LabelTags.Content = "--, --";
@@ -251,57 +252,85 @@ namespace MarioMaker2Overlay
             string levelCode = LevelCode.Text?.Replace("-", string.Empty) ?? string.Empty;
 
             if (IsValidLevelCode(levelCode))
-            {
-                // disable our DB upsert for a bit
-                _updateDatabaseTimer.Stop();
+			{
+				await LoadLevel(levelCode);
+			}
+		}
 
-                try
-                {
-                    // store the most recent version of the current
-                    // level to the DB first
-                    Upsert();
+		private async Task LoadLevel(string levelCode)
+		{
+			// disable our DB upsert for a bit
+			_updateDatabaseTimer.Stop();
 
-                    _levelData = await JoinMarioMakerApiAndDatabaseData(levelCode);
+			try
+			{
+				// store the most recent version of the current
+				// level to the DB first
+				Upsert();
 
-                    UpdateUi();
-                }
-                finally
-                {
-                    _updateDatabaseTimer.Start();
-                }
+				_levelData = await JoinMarioMakerApiAndDatabaseData(levelCode);
+
+				UpdateUi();
+
+                _stopwatch.Restart();
+
+                _stopwatch.Start(new TimeSpan(_levelData.TimeElapsed));
+			}
+			finally
+			{
+				_updateDatabaseTimer.Start();
+			}
+		}
+
+        private async Task<MarioMakerLevelData?> LoadLevelInfo(string levelCode)
+		{
+            MarioMakerLevelData? result = null;
+
+            try
+			{
+                result = await _nintendoServiceClient.GetLevelInfo(levelCode);
             }
-        }
+			catch (Exception ex)
+			{
 
-        private async Task<OverlayLevelData> JoinMarioMakerApiAndDatabaseData(string levelCode)
+			}
+
+            return result;
+		}
+
+		private async Task<OverlayLevelData> JoinMarioMakerApiAndDatabaseData(string levelCode)
         {
             OverlayLevelData overlayLevelData = new OverlayLevelData();
 
-            List<Task> tasks = new List<Task>();
-            
-            Task<MarioMakerLevelData> apiTask = _nintendoServiceClient.GetLevelInfo(levelCode);
+            Task<MarioMakerLevelData?> apiTask = LoadLevelInfo(levelCode);
             Task<LevelData?> databaseTask = _levelDataRepository.GetByLevelCode(levelCode);
 
             await Task.WhenAll(apiTask, databaseTask);
 
-            MarioMakerLevelData apiData = await apiTask;
+            MarioMakerLevelData? apiData = await apiTask;
             LevelData? levelData = await databaseTask;
 
-            overlayLevelData = new OverlayLevelData
-            {
-                Attempts = apiData.Attempts,
-                Boos = apiData.Boos,
-                WorldRecord = apiData.WorldRecord,
-                ClearRate = apiData.ClearRate,
-                Clears = apiData.Clears,
-                Code = levelCode,
-                DifficultyName = apiData.DifficultyName,
-                LevelDataId = levelData.LevelDataId,
-                Likes = apiData.Likes,
-                Name = apiData.Name,
-                TagsName = apiData.TagsName,
-                PlayerDeaths = levelData.PlayerDeaths,
-                ClearCheckTime = apiData.ClearCheckTime
-            };
+            if (apiData != null)
+			{
+                overlayLevelData.Attempts = apiData.Attempts;
+                overlayLevelData.Boos = apiData.Boos;
+                overlayLevelData.WorldRecord = apiData.WorldRecord;
+                overlayLevelData.ClearRate = apiData.ClearRate;
+                overlayLevelData.Clears = apiData.Clears;
+                overlayLevelData.Code = levelCode;
+                overlayLevelData.DifficultyName = apiData.DifficultyName;
+                overlayLevelData.Likes = apiData.Likes;
+                overlayLevelData.Name = apiData.Name;
+                overlayLevelData.TagsName = apiData.TagsName;
+                overlayLevelData.ClearCheckTime = apiData.ClearCheckTime;
+			}
+
+            if (levelData?.LevelDataId > 0)
+			{
+                overlayLevelData.LevelDataId = levelData.LevelDataId;
+                overlayLevelData.PlayerDeaths = levelData.PlayerDeaths;
+                overlayLevelData.TimeElapsed = levelData.TimeElapsed;
+			}
 
             return overlayLevelData;
         }

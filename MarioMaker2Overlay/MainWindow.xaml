@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MainWindow" Name="Window" ResizeMode="NoResize" WindowStartupLocation="Manual" MouseDown="Window_MouseDown" Left="600" Top="60" SizeToContent="WidthAndHeight" Background="Black">
+        Title="MainWindow" Name="Window" ResizeMode="NoResize" WindowStartupLocation="Manual" Top="0" Left="0" MouseDown="Window_MouseDown" SizeToContent="WidthAndHeight" Background="Black">
     <Grid>
         <StackPanel Margin="0,0,10,10" VerticalAlignment="Top" Width="1914">
             <DockPanel VerticalAlignment="Top">
@@ -22,7 +22,8 @@
                             <StackPanel Orientation="Horizontal" Margin="20,0,0,0">
                                 <Image Height="25" Source="/Assets/Images/boo.png"/>
                                 <Label x:Name="LabelBoos" Content="655" Margin="10,0,0,0" Padding="0" VerticalAlignment="Center" FontSize="24" Foreground="White"/>
-                            </StackPanel>
+								<Label x:Name="LabelLikeRatio" Content="(--)" Margin="10,0,0,0" Padding="0" VerticalAlignment="Center" FontSize="24" Foreground="White"/>
+							</StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="20,0,0,0">
                                 <Image Height="25" Source="/Assets/Images/clears.png"/>
                                 <Label x:Name="LabelClears" Content="---/--- (0%)" Margin="10,0,0,0" Padding="0" VerticalAlignment="Center" FontSize="24" Foreground="White"/>
@@ -31,7 +32,11 @@
                                 <Image Height="25" Source="/Assets/Images/world record.png"/>
                                 <Label x:Name="LabelWorldRecord" Content="00:00:00" Margin="10,0,0,0" Padding="0" VerticalAlignment="Center" FontSize="24" Foreground="White"/>
                             </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="20,0,0,0">
+							<StackPanel Orientation="Horizontal" Margin="20,0,0,0">
+								<Label x:Name="LabelClearCheckTimeLabel" Content="CC" Margin="10,0,0,0" Padding="0" VerticalAlignment="Center" FontSize="24" Foreground="White"/>
+								<Label x:Name="LabelClearCheckTime" Content="00:00:00" Margin="10,0,0,0" Padding="0" VerticalAlignment="Center" FontSize="24" Foreground="White"/>
+							</StackPanel>
+							<StackPanel Orientation="Horizontal" Margin="20,0,0,0">
                                 <Image HorizontalAlignment="Left" Height="25" VerticalAlignment="Center" Source="/Assets/Images/Tag Icon.png"/>
                                 <Label x:Name="LabelTags" Content="--, --" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" FontSize="24" Foreground="White"/>
                             </StackPanel>

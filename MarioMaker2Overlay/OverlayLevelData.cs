@@ -20,20 +20,21 @@ namespace MarioMaker2Overlay
 		public string ClearRate { get; set; }
 		public int Likes { get; set; }
 		public int Boos { get; set; }
-        public decimal LikeRatio { 
-            
-            get
+		public decimal LikeRatio
+		{
+			get
             {
                 decimal result = 1;
 
                 if (Boos > 0)
                 {
-                    result = Likes / Boos;
+                    result = decimal.Round((decimal)Likes / (decimal)Boos, 2);
                 }
 
                 return result;
             }
         }
         public string ClearCheckTime { get; set; }
-    }
+		public long TimeElapsed { get; set; }
+	}
 }
