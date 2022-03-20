@@ -17,7 +17,10 @@ namespace MarioMaker2Overlay.Models
 		[JsonPropertyName("world_record_pretty")]
 		public string WorldRecord { get; set; }
 
-		[JsonPropertyName("clears")]
+		[JsonPropertyName("upload_time_pretty")]
+        public string ClearCheckTime { get; set; }
+
+        [JsonPropertyName("clears")]
 		public int Clears { get; set; }
 		
 		[JsonPropertyName("attempts")]

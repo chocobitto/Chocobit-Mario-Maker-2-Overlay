@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace MarioMaker2Overlay.Persistence
 {
@@ -19,15 +20,15 @@ namespace MarioMaker2Overlay.Persistence
             }
         }
 
-        public LevelData GetByLevelCode(string levelCode)
+        public async Task<LevelData?> GetByLevelCode(string levelCode)
         {
             LevelData? result = null;
 
             using (MarioMaker2OverlayContext context = new())
             {
-                result = context.LevelData
+                result = await context.LevelData
                     .Where(a => a.Code == levelCode)
-                    .FirstOrDefault();
+                    .FirstOrDefaultAsync();
             }
 
             return result;

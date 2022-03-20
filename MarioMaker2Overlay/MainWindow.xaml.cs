@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net.Http;
 using System.Text.RegularExpressions;
@@ -16,7 +17,7 @@ namespace MarioMaker2Overlay
     {
         private Timer _updateDatabaseTimer = new Timer(5000);
         private GlobalKeyboardHook _globalKeyboardHook;
-        private LevelData _levelData = new();
+        private OverlayLevelData _levelData = new();
         private LevelDataRepository _levelDataRepository = new();
         private NintendoServiceClient _nintendoServiceClient = new(new HttpClient());
         private Timer _gameTimer = new Timer(20);
@@ -46,6 +47,7 @@ namespace MarioMaker2Overlay
             _websocketClientHelper.OnMarioDeath = (response) =>
             {
                 _levelData.PlayerDeaths++;
+                UpdateUi();
             };
 
             Task.Run(async () => await _websocketClientHelper.RunAsync());
@@ -117,8 +119,17 @@ namespace MarioMaker2Overlay
 
         private void UpdateUi()
         {
+            //_levelData.Code = LevelCode.Text;
+
             LabelDeathCount.Content = $"{_levelData.PlayerDeaths}";
-            _levelData.Code = LevelCode.Text;
+            LabelClears.Content = $"{_levelData.Clears}/{_levelData.Attempts} ({_levelData.ClearRate})";
+            LabelTags.Content = string.Join(", ", _levelData.TagsName) ?? "--";
+            LabelLevelName.Content = $"{_levelData.Name}";
+            LabelDifficultyName.Content = $"({_levelData.DifficultyName})";
+            LabelLikes.Content = _levelData.Likes;
+            LabelBoos.Content = _levelData.Boos;
+            LabelWorldRecord.Content = $"{_levelData.WorldRecord}";
+
             CalculateWinRate();
         }
 
@@ -179,8 +190,8 @@ namespace MarioMaker2Overlay
 
             data.Code = _levelData.Code?.Replace("-", string.Empty);
             data.PlayerDeaths = _levelData.PlayerDeaths;
-            data.TotalGlobalAttempts = _levelData.TotalGlobalAttempts;
-            data.TotalGlobalClears = _levelData.TotalGlobalClears;
+            data.TotalGlobalAttempts = _levelData.Attempts;
+            data.TotalGlobalClears = _levelData.Clears;
             data.TimeElapsed = _stopwatch.ElapsedTicks;
 
             return data;
@@ -195,22 +206,6 @@ namespace MarioMaker2Overlay
                     LabelGameTime.Content = $"{_stopwatch.Elapsed.ToString("hh\\:mm\\:ss\\.ff")}";
                 });
             }                        
-        }
-
-        private void Button_ClickGetData(object sender, RoutedEventArgs e)
-        {
-            UpdateUi();
-
-            Persistence.LevelData levelData;
-
-            levelData = _levelDataRepository.GetByLevelCode(LevelCode.Text);
-
-            _levelData.Code = levelData?.Code;
-            _levelData.PlayerDeaths = levelData.PlayerDeaths;
-            _levelData.TotalGlobalAttempts = levelData.TotalGlobalAttempts;
-            _levelData.TotalGlobalClears = levelData.TotalGlobalClears;
-
-            UpdateUi();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -266,44 +261,7 @@ namespace MarioMaker2Overlay
                     // level to the DB first
                     Upsert();
 
-                    try
-                    {
-                        MarioMakerLevelData levelData = await _nintendoServiceClient.GetLevelInfo(levelCode);
-
-                        LabelClears.Content = $"{levelData.Clears}/{levelData.Attempts} ({levelData.ClearRate})";
-                        LabelTags.Content = string.Join(", ", levelData.TagsName) ?? "--";
-                        LabelLevelName.Content = $"{levelData.Name}";
-                        LabelDifficultyName.Content = $"({levelData.DifficultyName})";
-                        LabelLikes.Content = levelData.Likes;
-                        LabelBoos.Content = levelData.Boos;
-                        LabelWorldRecord.Content = $"{levelData.WorldRecord}";
-
-                        // reset deaths and timer
-                        _levelData.Code = LevelCode.Text;
-                        _levelData.TotalGlobalAttempts = levelData.Attempts;
-                        _levelData.TotalGlobalClears = levelData.Clears;
-                    }
-                    catch (Exception ex)
-                    {
-                        InitializeAllFieldsToDefaults();
-                    }
-
-                    _stopwatch.Restart();
-                    _levelData.PlayerDeaths = 0;
-
-                    // reset deaths and timer for now until we're getting this
-                    // from the DB
-                    Persistence.LevelData data;
-
-                    data = _levelDataRepository.GetByLevelCode(levelCode);
-
-                    if (data != null)
-                    {
-                        TimeSpan elapsedFromDb = new TimeSpan(data.TimeElapsed);
-
-                        _stopwatch.Start(elapsedFromDb);
-                        _levelData.PlayerDeaths = data.PlayerDeaths;
-                    }
+                    _levelData = await JoinMarioMakerApiAndDatabaseData(levelCode);
 
                     UpdateUi();
                 }
@@ -312,6 +270,40 @@ namespace MarioMaker2Overlay
                     _updateDatabaseTimer.Start();
                 }
             }
+        }
+
+        private async Task<OverlayLevelData> JoinMarioMakerApiAndDatabaseData(string levelCode)
+        {
+            OverlayLevelData overlayLevelData = new OverlayLevelData();
+
+            List<Task> tasks = new List<Task>();
+            
+            Task<MarioMakerLevelData> apiTask = _nintendoServiceClient.GetLevelInfo(levelCode);
+            Task<LevelData?> databaseTask = _levelDataRepository.GetByLevelCode(levelCode);
+
+            await Task.WhenAll(apiTask, databaseTask);
+
+            MarioMakerLevelData apiData = await apiTask;
+            LevelData? levelData = await databaseTask;
+
+            overlayLevelData = new OverlayLevelData
+            {
+                Attempts = apiData.Attempts,
+                Boos = apiData.Boos,
+                WorldRecord = apiData.WorldRecord,
+                ClearRate = apiData.ClearRate,
+                Clears = apiData.Clears,
+                Code = levelCode,
+                DifficultyName = apiData.DifficultyName,
+                LevelDataId = levelData.LevelDataId,
+                Likes = apiData.Likes,
+                Name = apiData.Name,
+                TagsName = apiData.TagsName,
+                PlayerDeaths = levelData.PlayerDeaths,
+                ClearCheckTime = apiData.ClearCheckTime
+            };
+
+            return overlayLevelData;
         }
 
         //private void Button_Click(object sender, RoutedEventArgs e)
