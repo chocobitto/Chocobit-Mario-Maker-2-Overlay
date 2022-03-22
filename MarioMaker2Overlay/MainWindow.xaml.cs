@@ -54,9 +54,6 @@ namespace MarioMaker2Overlay
 
             _websocketClientHelper.OnMarioDeath = marioDeath;
             _websocketClientHelper.OnStartOver = marioDeath;
-            
-
-            
 
             Task.Run(async () => await _websocketClientHelper.RunAsync());
 
@@ -80,7 +77,7 @@ namespace MarioMaker2Overlay
             if (_levelData?.LevelDataId > 0 || !string.IsNullOrWhiteSpace(_levelData?.Code))
             {
                 // if it exists update it
-                Persistence.LevelData levelData;
+                LevelData levelData;
 
                 levelData = LocalToDb();
 
@@ -129,18 +126,25 @@ namespace MarioMaker2Overlay
         {
             //_levelData.Code = LevelCode.Text;
 
-            LabelDeathCount.Content = $"{_levelData.PlayerDeaths}";
-            LabelClears.Content = $"{_levelData.Clears}/{_levelData.Attempts} ({_levelData.ClearRate})";
-            LabelTags.Content = string.Join(", ", _levelData.TagsName) ?? "--";
-            LabelLevelName.Content = $"{_levelData.Name}";
-            LabelDifficultyName.Content = $"({_levelData.DifficultyName})";
-            LabelLikes.Content = _levelData.Likes;
-            LabelBoos.Content = _levelData.Boos;
-            LabelWorldRecord.Content = $"{_levelData.WorldRecord}";
-            LabelLikeRatio.Content = $"({_levelData.LikeRatio}:1)";
-            LabelClearCheckTime.Content = _levelData.ClearCheckTime;
+            if (!string.IsNullOrWhiteSpace(_levelData.Code))
+            {
+                LabelDeathCount.Content = $"{_levelData.PlayerDeaths}";
+                LabelClears.Content = $"{_levelData.Clears}/{_levelData.Attempts} ({_levelData.ClearRate})";
+                LabelTags.Content = string.Join(", ", _levelData.TagsName) ?? "--";
+                LabelLevelName.Content = $"{_levelData.Name}";
+                LabelDifficultyName.Content = $"({_levelData.DifficultyName})";
+                LabelLikes.Content = _levelData.Likes;
+                LabelBoos.Content = _levelData.Boos;
+                LabelWorldRecord.Content = $"{_levelData.WorldRecord}";
+                LabelLikeRatio.Content = $"({_levelData.LikeRatio}:1)";
+                LabelClearCheckTime.Content = _levelData.ClearCheckTime;
 
-            CalculateWinRate();
+                CalculateWinRate();
+            }
+            else
+            {
+                InitializeAllFieldsToDefaults();
+            }            
         }
 
         public void Dispose()
@@ -176,7 +180,7 @@ namespace MarioMaker2Overlay
         {
             UpdateUi();
 
-            Persistence.LevelData levelData;
+            LevelData levelData;
 
             levelData = LocalToDb();
 
@@ -187,16 +191,16 @@ namespace MarioMaker2Overlay
         {
             UpdateUi();
 
-            Persistence.LevelData levelData;
+            LevelData levelData;
 
             levelData = LocalToDb();
 
             _levelDataRepository.Insert(levelData);
         }
 
-        private Persistence.LevelData LocalToDb()
+        private LevelData LocalToDb()
         {
-            Persistence.LevelData data = new();
+            LevelData data = new();
 
             data.Code = _levelData.Code?.Replace("-", string.Empty);
             data.PlayerDeaths = _levelData.PlayerDeaths;
@@ -224,7 +228,7 @@ namespace MarioMaker2Overlay
 
             for(int i = 0; i < 1000000; i++)
             {
-                Persistence.LevelData newLevelData = new Persistence.LevelData { Code = myRandom.Next(100000000, 999999999).ToString(), PlayerDeaths = myRandom.Next(5, 300), TotalGlobalAttempts = myRandom.Next(100, 10000), TotalGlobalClears = myRandom.Next(10, 600) };
+                LevelData newLevelData = new LevelData { Code = myRandom.Next(100000000, 999999999).ToString(), PlayerDeaths = myRandom.Next(5, 300), TotalGlobalAttempts = myRandom.Next(100, 10000), TotalGlobalClears = myRandom.Next(10, 600) };
 
                 _levelDataRepository.Insert(newLevelData);
             }
@@ -300,17 +304,14 @@ namespace MarioMaker2Overlay
 			{
                 result = await _nintendoServiceClient.GetLevelInfo(levelCode);
             }
-			catch (Exception ex)
-			{
-
-			}
+			catch {}
 
             return result;
 		}
 
 		private async Task<OverlayLevelData> JoinMarioMakerApiAndDatabaseData(string levelCode)
         {
-            OverlayLevelData overlayLevelData = new OverlayLevelData();
+            OverlayLevelData overlayLevelData = new();
 
             Task<MarioMakerLevelData?> apiTask = LoadLevelInfo(levelCode);
             Task<LevelData?> databaseTask = _levelDataRepository.GetByLevelCode(levelCode);
@@ -333,65 +334,16 @@ namespace MarioMaker2Overlay
                 overlayLevelData.Name = apiData.Name;
                 overlayLevelData.TagsName = apiData.TagsName;
                 overlayLevelData.ClearCheckTime = apiData.ClearCheckTime;
-			}
 
-            if (levelData?.LevelDataId > 0)
-			{
-                overlayLevelData.LevelDataId = levelData.LevelDataId;
-                overlayLevelData.PlayerDeaths = levelData.PlayerDeaths;
-                overlayLevelData.TimeElapsed = levelData.TimeElapsed;
-			}
+                if (levelData?.LevelDataId > 0)
+                {
+                    overlayLevelData.LevelDataId = levelData.LevelDataId;
+                    overlayLevelData.PlayerDeaths = levelData.PlayerDeaths;
+                    overlayLevelData.TimeElapsed = levelData.TimeElapsed;
+                }
+            }           
 
             return overlayLevelData;
         }
-
-        //private void Button_Click(object sender, RoutedEventArgs e)
-        //{
-
-        //    List<LevelData> existingFileData = GetLevelDataFromFile();
-
-        //    using (FileStream myFile = File.OpenWrite("LevelData.json"))
-        //    {
-        //        existingFileData.Add(_levelData);
-
-        //        BinaryFormatter binaryFormatter = new();
-
-        //        binaryFormatter.Serialize(myFile, existingFileData);
-
-
-        //        XmlSerializer serializer = new XmlSerializer(typeof(List<LevelData>));
-        //        XmlWriter myWriter = XmlWriter.Create(myFile);
-        //        serializer.Serialize(myWriter, existingFileData);
-
-        //        JsonSerializer.Serialize(myFile, new List<LevelData> { _levelData });
-        //    }
-        //}
-
-        //private void Button_Click_1(object sender, RoutedEventArgs e)
-        //{
-        //    _levelData = GetLevelDataFromFile().First();
-
-        //    UpdateUi();
-        //}
-
-        //private List<LevelData> GetLevelDataFromFile()
-        //{
-        //    List<LevelData> result = new();
-
-        //    using (FileStream myFile = File.OpenRead("LevelData.json"))
-        //    {
-        //        BinaryFormatter binaryFormatter = new();
-
-        //        result = (List<LevelData>)binaryFormatter.Deserialize(myFile);
-
-        //        XmlSerializer serializer = new XmlSerializer(typeof(List<LevelData>));
-
-        //        result = (List<LevelData>)serializer.Deserialize(myFile);
-
-        //        result = JsonSerializer.Deserialize<List<LevelData>>(myFile) ?? new List<LevelData>();
-        //    }
-
-        //    return result;
-        //}
     }
 }

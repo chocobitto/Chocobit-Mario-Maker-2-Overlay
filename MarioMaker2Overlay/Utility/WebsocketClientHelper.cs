@@ -80,9 +80,9 @@ namespace MarioMaker2Overlay.Utility
                 {
                     OnMarioDeath(dataFromService);
                 }
-                else if (OnMarioDeath != null && (dataFromService?.Type.Equals("restart", StringComparison.OrdinalIgnoreCase) ?? false))
+                else if (OnStartOver != null && (dataFromService?.Type.Equals("restart", StringComparison.OrdinalIgnoreCase) ?? false))
                 {
-                    OnMarioDeath(dataFromService);
+                    OnStartOver(dataFromService);
                 }
             }
             catch (Exception ex)
