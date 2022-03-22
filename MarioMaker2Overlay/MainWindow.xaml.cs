@@ -39,7 +39,7 @@ namespace MarioMaker2Overlay
                     {
                         LevelCode.Text = response.Level.Code;
                     });
-                }                
+                }
             };
 
             _websocketClientHelper.OnMarioDeath = (response) =>

@@ -18,35 +18,35 @@ namespace MarioMaker2Overlay.Utility
         {
             CancellationTokenSource source = new CancellationTokenSource();
 
-            using (var ws = new ClientWebSocket())
+            using (var webSocketClient = new ClientWebSocket())
             {
-                await ws.ConnectAsync(new Uri("ws://localhost:3000/wss"), CancellationToken.None);
-                while (ws.State == WebSocketState.Open)
+                await webSocketClient.ConnectAsync(new Uri("ws://localhost:3000/wss"), CancellationToken.None);
+                while (webSocketClient.State == WebSocketState.Open)
                 {
 
                     ArraySegment<Byte> buffer = new ArraySegment<byte>(new Byte[8192]);
                     WebSocketReceiveResult? result = null;
 
-                    using (var ms = new MemoryStream())
+                    using (var memoryStream = new MemoryStream())
                     {
                         try
                         {
                             do
                             {
-                                result = await ws.ReceiveAsync(buffer, CancellationToken.None);
-                                ms.Write(buffer.Array, buffer.Offset, result.Count);
+                                result = await webSocketClient.ReceiveAsync(buffer, CancellationToken.None);
+                                memoryStream.Write(buffer.Array, buffer.Offset, result.Count);
                             }
                             while (!result.EndOfMessage);
 
-                            ms.Seek(0, SeekOrigin.Begin);
+                            memoryStream.Seek(0, SeekOrigin.Begin);
 
                             if (result.MessageType == WebSocketMessageType.Close)
                             {
-                                await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+                                await webSocketClient.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
                             }
                             else
                             {
-                                HandleMessage(ms.GetBuffer());
+                                HandleMessage(memoryStream.GetBuffer());
                             }
                         }
                         catch (Exception ex)
