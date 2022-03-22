@@ -42,11 +42,21 @@ namespace MarioMaker2Overlay
                 }                
             };
 
-            _websocketClientHelper.OnMarioDeath = (response) =>
+            Action<MarioMaker2OcrModel> marioDeath = (response) =>
             {
                 _levelData.PlayerDeaths++;
-                UpdateUi();
+
+                Dispatcher.Invoke(() =>
+                {
+                    UpdateUi();
+                });
             };
+
+            _websocketClientHelper.OnMarioDeath = marioDeath;
+            _websocketClientHelper.OnStartOver = marioDeath;
+            
+
+            
 
             Task.Run(async () => await _websocketClientHelper.RunAsync());
 

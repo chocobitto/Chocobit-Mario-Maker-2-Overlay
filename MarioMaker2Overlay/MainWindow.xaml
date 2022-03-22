@@ -6,7 +6,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Name="Window" ResizeMode="NoResize" WindowStartupLocation="Manual" Top="0" Left="0" MouseDown="Window_MouseDown" SizeToContent="WidthAndHeight" Background="Black">
     <Grid>
-        <StackPanel Margin="0,0,10,10" VerticalAlignment="Top" Width="1914">
+        <StackPanel Margin="0,0,10,10" VerticalAlignment="Top">
             <DockPanel VerticalAlignment="Top">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,0">
                     <StackPanel>

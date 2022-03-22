@@ -13,6 +13,7 @@ namespace MarioMaker2Overlay.Utility
     {
         public Action<MarioMaker2OcrModel>? OnLevelCodeChanged;
         public Action<MarioMaker2OcrModel>? OnMarioDeath;
+        public Action<MarioMaker2OcrModel>? OnStartOver;
 
         public async Task RunAsync()
         {
@@ -76,6 +77,10 @@ namespace MarioMaker2Overlay.Utility
                     OnLevelCodeChanged(dataFromService);
                 }
                 else if (OnMarioDeath != null && (dataFromService?.Type.Equals("death", StringComparison.OrdinalIgnoreCase) ?? false))
+                {
+                    OnMarioDeath(dataFromService);
+                }
+                else if (OnMarioDeath != null && (dataFromService?.Type.Equals("restart", StringComparison.OrdinalIgnoreCase) ?? false))
                 {
                     OnMarioDeath(dataFromService);
                 }
