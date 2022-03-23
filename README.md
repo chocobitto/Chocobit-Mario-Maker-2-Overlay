@@ -6,7 +6,7 @@ Mario Maker 2 Overlay is a tool that can automatically display information about
 ## Clear Rate Comparison and Timer
 First things first, this project allows you to track time invested in a level as well as number of deaths. Pressing the up or down arrows increase or decrease your death count. Moreso though, the overlay also estimates your current clear rate for the level so that you can compare it to the playerbase average. Additionally, when you move on to a new level and come back, it will restore the timer and the death count in case you want to stop playing a level for a bit, then come back to it.
 
-## API Integration
+## Nintendo API Integration
 While developing the application it became clear the value of loading details for the current level directly from Nintendo. This makes comparing your clear rate performance against the community average much simpler and more accurate. Once we had API integration though we decided showing a lot more information would be interestging. So, we additionally display:
 
 * Level Name
