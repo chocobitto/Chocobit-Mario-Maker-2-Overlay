@@ -1,6 +1,8 @@
 # Mario Maker 2 Overlay
 Mario Maker 2 Overlay is a tool that can automatically display information about the current level you're playing. It will also automatically time the level and count your deaths. Just set it up, and turn it on and it does all the work for you. It's designed to be a stream overlay, but can be used just to give you that extra edge in endless or automatically track your play time and deaths even if you stop playing a level for a bit and come back to it. It remembers how long you've played a level and how many times you've died across play breaks.
 
+![Application Screenshot!](https://github.com/chocobitto/Mario-Maker-2-Overlay/blob/master/screenshots/app.jpg)
+
 ## Clear Rate Comparison and Timer
 First things first, this project allows you to track time invested in a level as well as number of deaths. Pressing the up or down arrows increase or decrease your death count. Moreso though, the overlay also estimates your current clear rate for the level so that you can compare it to the playerbase average. Additionally, when you move on to a new level and come back, it will restore the timer and the death count in case you want to stop playing a level for a bit, then come back to it.
 
