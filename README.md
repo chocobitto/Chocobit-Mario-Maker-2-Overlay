@@ -33,4 +33,4 @@ Running the application is simple, just build the project and run the executable
 ## Setting up the OCR Integration
 To get your deaths to be counted automatically and have the level loaded automatically you have to download and start the Mario Maker OCR tool before opening the Mario Maker 2 Overlay. Go to the [readme page](https://github.com/dram55/MarioMaker2OCR) for the project and follow the directions.
 
->The Mario Maker 2 OCR page gives instructions on set up for OBS. It so happens that there is something similar needed for `Streamlabs`, but it's much easier to do. Just google `virtual camera` and Streamlabs to learn how it is done.
+>The Mario Maker 2 OCR page gives instructions on set up for OBS. It so happens that there is something similar needed for `Streamlabs`, but it's much easier to do. If you're using Streamlabs just google `virtual camera` and Streamlabs to learn how it is done.
