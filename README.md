@@ -16,7 +16,7 @@ While developing the application it became clear the value of loading details fo
 * Level Difficulty Categorization
 * Likes
 * Boos
-* Like R  atio (e.g. 5:1)
+* Like Ratio (e.g. 5:1)
 * Clears
 * Attempts
 * Clear Rate
