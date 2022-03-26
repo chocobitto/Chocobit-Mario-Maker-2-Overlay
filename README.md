@@ -1,4 +1,7 @@
 # Chocobit Mario Maker 2 Overlay
+
+I'm a streamer ([Chocobit on Twitch](https://www.twitch.tv/chocobitto)) and YouTuber ([Chocobit on YouTube](https://www.youtube.com/channel/UCaAfaDoOG80C1KfDI5_W9iw)) that wanted to add some extra interest to my content with a custom Mario Maker 2 overlay. I've been streaming for a little less than a year but I've been a programmer for 22 years and so I created my own. What was meant to just provide more interest to my content turned into something that's a huge support for me when I play as well.
+
 Mario Maker 2 Overlay is a tool that can automatically display information about the current level you're playing. It will also automatically time the level and count your deaths. Just set it up, and turn it on and it does all the work for you. It's designed to be a stream overlay, but can be used just to give you that extra edge in endless or automatically track your play time and deaths even if you stop playing a level for a bit and come back to it. It remembers how long you've played a level and how many times you've died across play breaks.
 
 ![Application Screenshot!](https://github.com/chocobitto/Mario-Maker-2-Overlay/blob/master/screenshots/app.jpg)
