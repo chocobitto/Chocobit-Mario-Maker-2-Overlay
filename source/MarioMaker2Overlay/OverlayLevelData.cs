@@ -24,7 +24,7 @@ namespace MarioMaker2Overlay
 		{
 			get
             {
-                decimal result = 1;
+                decimal result = Likes;
 
                 if (Boos > 0)
                 {
