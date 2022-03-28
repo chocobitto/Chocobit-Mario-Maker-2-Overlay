@@ -10,11 +10,15 @@
   <ItemGroup>
     <None Remove="Assets\Images\boo.png" />
     <None Remove="Assets\Images\clears.png" />
+    <None Remove="Assets\Images\clears_blue.png" />
+    <None Remove="Assets\Images\clears_white.png" />
     <None Remove="Assets\Images\deaths.png" />
     <None Remove="Assets\Images\like.png" />
     <None Remove="Assets\Images\Tag Icon.png" />
     <None Remove="Assets\Images\timer.png" />
+    <None Remove="Assets\Images\timer_blue.png" />
     <None Remove="Assets\Images\world record.png" />
+    <None Remove="Assets\Images\world record_blue.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,6 +30,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\Images\clears.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Images\clears_white.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\Images\deaths.png">
@@ -40,7 +47,19 @@
     <Content Include="Assets\Images\timer.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\Images\timer_blue.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Assets\Images\world record.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\Images\clears_blue.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Images\world record_blue.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
