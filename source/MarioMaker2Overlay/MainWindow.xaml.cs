@@ -302,6 +302,8 @@ namespace MarioMaker2Overlay
 
             try
 			{
+                _nintendoServiceClient.CancelOutstandingRequest();
+
                 result = await _nintendoServiceClient.GetLevelInfo(levelCode);
             }
 			catch {}
