@@ -34,5 +34,11 @@ namespace MarioMaker2Overlay.Models
 
 		[JsonPropertyName("boos")]
 		public int Boos { get; set; }
-	}
+
+        [JsonPropertyName("theme_name")]
+		public string ThemeName { get; set; }
+		
+		[JsonPropertyName("game_style_name")]
+		public string GameStyleName { get; set; }
+    }
 }

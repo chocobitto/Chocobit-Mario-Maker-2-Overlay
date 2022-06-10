@@ -27,5 +27,19 @@ namespace MarioMaker2Overlay.Persistence
         public int TotalGlobalAttempts { get; set; }
 
         public long TimeElapsed { get; set; }
+
+        public string? Theme { get; set; }
+
+        public string? GameStyle { get; set; }
+
+        public string? Difficulty { get; set; }
+
+        public string? Tags { get; set; }
+
+        public DateTime? DateTimeUploaded { get; set; }
+
+        public int? ClearConditionMagnitude { get; set; }
+
+        public string? ClearCondition { get; set; }
     }
 }

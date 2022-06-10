@@ -1,4 +1,5 @@
 ﻿using MarioMaker2Overlay.Persistence;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
 using System.Windows;
@@ -10,17 +11,17 @@ namespace MarioMaker2Overlay
     {
         public void AppStartup(object sender, StartupEventArgs e)
         {
-            InitializeDataBase();
+            InitializeDatabase();
 
             MainWindow mainwindow = new();
 
             mainwindow.Show();
         }
 
-        private void InitializeDataBase()
+        private void InitializeDatabase()
         {
             MarioMaker2OverlayContext context = new();
-            context.Database.EnsureCreated();
+            context.Database.Migrate();
         }
     }
 }
