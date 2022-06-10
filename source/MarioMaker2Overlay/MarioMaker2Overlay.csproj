@@ -19,6 +19,11 @@
     <None Remove="Assets\Images\timer_blue.png" />
     <None Remove="Assets\Images\world record.png" />
     <None Remove="Assets\Images\world record_blue.png" />
+    <None Remove="Persistence\ManuallyCreateEFMigrationsHistory.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Persistence\ManuallyCreateEFMigrationsHistory.sql" />
   </ItemGroup>
 
   <ItemGroup>
