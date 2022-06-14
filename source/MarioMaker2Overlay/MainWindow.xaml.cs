@@ -347,5 +347,12 @@ namespace MarioMaker2Overlay
 
             return overlayLevelData;
         }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            WpfScreen myScreen = WpfScreen.GetScreenFrom(this);
+
+            Left = (myScreen.DeviceBounds.Width / 2) - (Width / 2);
+        }
     }
 }
