@@ -55,6 +55,30 @@ namespace MarioMaker2Overlay
             _websocketClientHelper.OnMarioDeath = marioDeath;
             _websocketClientHelper.OnStartOver = marioDeath;
 
+            _websocketClientHelper.OnClear = (response) =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    Regex timeParser = new Regex(@"(?<minutes>\d\d)'(?<seconds>\d\d)""(?<tenths>\d\d\d)");
+
+                    Match match = timeParser.Match(response.Data);
+                    
+                    TimeSpan? clearTime = null;
+
+                    if (match.Success && int.TryParse(match.Groups["minutes"].Value, out int minutes)
+                        && int.TryParse(match.Groups["seconds"].Value, out int seconds)
+                        && int.TryParse(match.Groups["tenths"].Value, out int tenths))
+                    {
+                        clearTime = new TimeSpan(0, 0, minutes, seconds, tenths);
+                    }
+
+                    LevelCleared(clearTime);
+                });
+            };
+
+            _websocketClientHelper.OnWorldRecord = WorldRecord;
+            _websocketClientHelper.OnFirstClear = FirstClear;
+
             Task.Run(async () => await _websocketClientHelper.RunAsync());
 
             WindowStyle = WindowStyle.None;
@@ -87,12 +111,17 @@ namespace MarioMaker2Overlay
 
         protected override void OnClosing(CancelEventArgs e)
         {
+            FinishOutLevel();
+
+            base.OnClosing(e);
+        }
+
+        private void FinishOutLevel()
+        {
             _gameTimer.Stop();
             _updateDatabaseTimer.Stop();
 
             Upsert();
-
-            base.OnClosing(e);
         }
 
         public void SetupKeyboardHooks()
@@ -271,7 +300,25 @@ namespace MarioMaker2Overlay
 			}
 		}
 
-		private async Task LoadLevel(string levelCode)
+        private void LevelCleared(TimeSpan? clearTime)
+        {
+            FinishOutLevel();
+            _levelDataRepository.MarkLevelCleared(_levelData.Code, clearTime);
+        }
+
+        private void FirstClear()
+        {
+            FinishOutLevel();
+            _levelDataRepository.MarkFirstClear(_levelData.Code);
+        }
+
+        private void WorldRecord()
+        {
+            FinishOutLevel();
+            _levelDataRepository.MarkWorldRecord(_levelData.Code);
+        }
+
+        private async Task LoadLevel(string levelCode)
 		{
 			// disable our DB upsert for a bit
 			_updateDatabaseTimer.Stop();

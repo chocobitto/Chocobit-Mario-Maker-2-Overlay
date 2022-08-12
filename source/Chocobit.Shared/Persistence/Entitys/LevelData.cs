@@ -1,26 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 namespace MarioMaker2Overlay.Persistence
 {
     [Table(nameof(LevelData))]
     [Index(nameof(Code), IsUnique = true)]
-    class LevelData
+    public class LevelData
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int LevelDataId { get; set; }
 
+        public int PlayerId { get; set; }
+
         [StringLength(11)]
         public string? Code { get; set; }
 
         public int PlayerDeaths { get; set; }
+
+        public long ClearTime { get; set; }
+
+        public bool WorldRecord { get; set; }
+
+        public bool FirstClear { get; set; }
 
         public int TotalGlobalClears { get; set; }
 
@@ -41,5 +45,9 @@ namespace MarioMaker2Overlay.Persistence
         public int? ClearConditionMagnitude { get; set; }
 
         public string? ClearCondition { get; set; }
+
+        public DateTime DateTimeStarted { get; set; }
+
+        public DateTime DateTimeCleared { get; set; }
     }
 }

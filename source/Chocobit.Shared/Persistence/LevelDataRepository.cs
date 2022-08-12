@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MarioMaker2Overlay.Persistence
 {
-    class LevelDataRepository
+    public class LevelDataRepository
     {
         public void Insert(LevelData levelData)
         {
@@ -66,13 +66,71 @@ namespace MarioMaker2Overlay.Persistence
                     .Where(a => a.Code == levelData.Code)
                     .FirstOrDefault();
 
-                //copy data from passed levelData object
-                //onto "current"
-                current.PlayerDeaths = levelData.PlayerDeaths;
+                if (current!= null)
+                {
+                    //copy data from passed levelData object
+                    //onto "current"
+                    current.PlayerDeaths = levelData.PlayerDeaths;
+                }
 
                 context.SaveChanges();
             }
         }
 
+        public void MarkLevelCleared(string code, TimeSpan? clearTime)
+        {
+            using (MarioMaker2OverlayContext context = new())
+            {
+                LevelData? current = context.LevelData
+                    .Where(a => a.Code == code)
+                    .FirstOrDefault();
+
+                if (current != null)
+                {
+                    current.DateTimeCleared = DateTime.Now;
+
+                    if (clearTime != null)
+                    {
+                        current.ClearTime = clearTime.Value.Ticks;
+                    }
+                }
+
+                context.SaveChanges();
+            }
+        }
+
+        public void MarkFirstClear(string code)
+        {
+            using (MarioMaker2OverlayContext context = new())
+            {
+                LevelData? current = context.LevelData
+                    .Where(a => a.Code == code)
+                    .FirstOrDefault();
+
+                if (current != null)
+                {
+                    current.FirstClear = true;
+                }
+
+                context.SaveChanges();
+            }
+        }
+
+        public void MarkWorldRecord(string code)
+        {
+            using (MarioMaker2OverlayContext context = new())
+            {
+                LevelData? current = context.LevelData
+                    .Where(a => a.Code == code)
+                    .FirstOrDefault();
+
+                if (current != null)
+                {
+                    current.WorldRecord = true;
+                }
+
+                context.SaveChanges();
+            }
+        }
     }
 }
