@@ -5,8 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ChocobitAwesomenessIndex"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" WindowStyle="None">
     <Grid>
-
+        <StackPanel Orientation="Vertical">
+            <Label Content="CBAI" HorizontalAlignment="Stretch" VerticalAlignment="Top" FontSize="24" HorizontalContentAlignment="Center" FontWeight="Bold" Padding="0"/>
+            <Separator Margin="0" Padding="0" Height="1" Width="80"/>
+            <Label Name="LabelAwesomenessIndex" Content="100" HorizontalAlignment="Stretch" VerticalAlignment="Top" FontSize="48" HorizontalContentAlignment="Center" FontWeight="Bold" Padding="5, 0, 5, 0"/>
+            <Separator Margin="0" Padding="0" Height="1" Width="80"/>
+            <Label Name="LabelPlayer" Content="" HorizontalAlignment="Stretch" VerticalAlignment="Top" FontSize="8" HorizontalContentAlignment="Right" FontWeight="Bold" Padding="5, 0, 5, 0" Foreground="#FF858585"/>
+        </StackPanel>
     </Grid>
 </Window>

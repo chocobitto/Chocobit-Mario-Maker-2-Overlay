@@ -48,6 +48,6 @@ namespace MarioMaker2Overlay.Persistence
 
         public DateTime DateTimeStarted { get; set; }
 
-        public DateTime DateTimeCleared { get; set; }
+        public DateTime? DateTimeCleared { get; set; }
     }
 }

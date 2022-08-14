@@ -20,6 +20,31 @@ namespace MarioMaker2Overlay
 		public string ClearRate { get; set; }
 		public int Likes { get; set; }
 		public int Boos { get; set; }
+        public string ClearCheckTime { get; set; }
+
+		public long TimeElapsed { get; set; }
+
+        public long ClearTime { get; set; }
+
+        public bool FirstClear { get; set; }
+
+        public int TotalGlobalClears { get; set; }
+
+        public int TotalGlobalAttempts { get; set; }
+
+        public string? Theme { get; set; }
+
+        public string? GameStyle { get; set; }
+
+        public DateTime? DateTimeUploaded { get; set; }
+
+        public int? ClearConditionMagnitude { get; set; }
+
+        public string? ClearCondition { get; set; }
+
+        public DateTime DateTimeStarted { get; set; }
+
+        public DateTime? DateTimeCleared { get; set; }
 		public decimal LikeRatio
 		{
 			get
@@ -34,7 +59,5 @@ namespace MarioMaker2Overlay
                 return result;
             }
         }
-        public string ClearCheckTime { get; set; }
-		public long TimeElapsed { get; set; }
-	}
+    }
 }

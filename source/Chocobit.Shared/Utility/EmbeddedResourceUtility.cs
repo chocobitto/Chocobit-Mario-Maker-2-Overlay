@@ -9,7 +9,7 @@ namespace MarioMaker2Overlay.Utility
         {
             string commandText = string.Empty;
 
-            Assembly assembly = Assembly.Load("MarioMaker2Overlay");
+            Assembly assembly = Assembly.Load("Chocobit.Shared");
             Stream resourceStream = assembly.GetManifestResourceStream(fileName);
             using (StreamReader reader = new(resourceStream))
             {

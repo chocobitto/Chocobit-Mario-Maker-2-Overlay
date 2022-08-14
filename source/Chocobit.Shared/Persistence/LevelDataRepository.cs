@@ -52,6 +52,24 @@ namespace MarioMaker2Overlay.Persistence
                     current.TimeElapsed = levelData.TimeElapsed;
                     current.TotalGlobalAttempts = levelData.TotalGlobalAttempts;
                     current.TotalGlobalClears = levelData.TotalGlobalClears;
+                    current.ClearCondition = levelData.ClearCondition;
+                    current.ClearConditionMagnitude = levelData.ClearConditionMagnitude;
+                    current.ClearTime = levelData.ClearTime;
+
+                    if (current.DateTimeCleared == null)
+                    {
+                        current.DateTimeCleared = levelData.DateTimeCleared;
+                    }
+
+                    current.DateTimeUploaded = levelData.DateTimeUploaded;
+                    current.Difficulty = levelData.Difficulty;
+                    current.FirstClear = levelData.FirstClear;
+                    current.GameStyle = levelData.GameStyle;
+                    current.Tags = levelData.Tags;
+                    current.Theme = levelData.Theme;
+                    current.TotalGlobalAttempts = levelData.TotalGlobalAttempts;
+                    current.TotalGlobalClears = levelData.TotalGlobalClears;
+                    current.WorldRecord = levelData.WorldRecord;
                 }
 
                 context.SaveChanges();
@@ -130,6 +148,39 @@ namespace MarioMaker2Overlay.Persistence
                 }
 
                 context.SaveChanges();
+            }
+        }
+
+        public async Task<List<(string, double, int)>> GetAverageClearRates(int playerId)
+        {
+            using (MarioMaker2OverlayContext context = new())
+            {
+                List<(string, double, int)> rates =
+                        (await context.LevelData
+                        .Where(a => a.PlayerId == playerId
+                               && a.DateTimeCleared != null)
+                        .GroupBy(a => a.Difficulty)
+                        .Select(a => new { a.Key, Average = a.Average(b => (double)(b.PlayerDeaths / 100)), LevelsPlayed = a.Count() })
+                        .ToListAsync())
+                        .Select(a => (a.Key, a.Average, a.LevelsPlayed))
+                        .ToList();
+
+                return rates;
+            }
+        }
+
+        public async Task<double> GetClearRateSuperiorityIndex(int playerId)
+        {
+            using (MarioMaker2OverlayContext context = new())
+            {
+                double rateSuperiorityIndex = 
+                    await context.LevelData
+                        .Where(a => a.PlayerId == playerId
+                               && a.DateTimeCleared != null)
+                        .Select(a => new { AverageSuperiority = (double)(a.PlayerDeaths / 100) - (a.TotalGlobalClears / a.TotalGlobalAttempts) })
+                        .AverageAsync(a => a.AverageSuperiority);
+
+                return rateSuperiorityIndex;
             }
         }
     }

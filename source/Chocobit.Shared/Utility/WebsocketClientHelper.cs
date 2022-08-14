@@ -9,7 +9,7 @@ using MarioMaker2Overlay.Models;
 
 namespace MarioMaker2Overlay.Utility
 {
-    internal class WebsocketClientHelper
+    public class WebsocketClientHelper
     {
         public Action<MarioMaker2OcrModel>? OnLevelCodeChanged;
         public Action<MarioMaker2OcrModel>? OnMarioDeath;
