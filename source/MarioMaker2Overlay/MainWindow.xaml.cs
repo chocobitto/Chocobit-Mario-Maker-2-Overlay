@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
+using System.Windows.Forms;
 using MarioMaker2Overlay.Models;
 using MarioMaker2Overlay.Persistence;
 using MarioMaker2Overlay.Utility;
@@ -15,12 +16,11 @@ namespace MarioMaker2Overlay
 {
     public partial class MainWindow : Window
     {
-        private Timer _updateDatabaseTimer = new Timer(5000);
-        private GlobalKeyboardHook _globalKeyboardHook;
+        private System.Timers.Timer _updateDatabaseTimer = new System.Timers.Timer(5000);
         private OverlayLevelData _levelData = new();
         private LevelDataRepository _levelDataRepository = new();
         private NintendoServiceClient _nintendoServiceClient = new(new HttpClient());
-        private Timer _gameTimer = new Timer(20);
+        private System.Timers.Timer _gameTimer = new System.Timers.Timer(20);
         public decimal _time;
         private StopwatchWithOffset _stopwatch = new();
         private WebsocketClientHelper _websocketClientHelper = new WebsocketClientHelper();
@@ -28,7 +28,10 @@ namespace MarioMaker2Overlay
         public MainWindow()
         {
             InitializeComponent();
-            SetupKeyboardHooks();
+
+            var keyboardHook = new KeyboardHook(true);
+            keyboardHook.KeyUp += OnKeyPressed;
+
             InitializeAllFieldsToDefaults();
 
             _websocketClientHelper.OnLevelCodeChanged = (response) =>
@@ -54,6 +57,30 @@ namespace MarioMaker2Overlay
 
             _websocketClientHelper.OnMarioDeath = marioDeath;
             _websocketClientHelper.OnStartOver = marioDeath;
+
+            _websocketClientHelper.OnClear = (response) =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    Regex timeParser = new Regex(@"(?<minutes>\d\d)'(?<seconds>\d\d)""(?<tenths>\d\d\d)");
+
+                    Match match = timeParser.Match(response.Data);
+                    
+                    TimeSpan? clearTime = null;
+
+                    if (match.Success && int.TryParse(match.Groups["minutes"].Value, out int minutes)
+                        && int.TryParse(match.Groups["seconds"].Value, out int seconds)
+                        && int.TryParse(match.Groups["tenths"].Value, out int tenths))
+                    {
+                        clearTime = new TimeSpan(0, 0, minutes, seconds, tenths);
+                    }
+
+                    LevelCleared(clearTime);
+                });
+            };
+
+            _websocketClientHelper.OnWorldRecord = WorldRecord;
+            _websocketClientHelper.OnFirstClear = FirstClear;
 
             Task.Run(async () => await _websocketClientHelper.RunAsync());
 
@@ -87,38 +114,34 @@ namespace MarioMaker2Overlay
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            _gameTimer.Stop();
-            _updateDatabaseTimer.Stop();
-
-            Upsert();
+            FinishOutLevel();
 
             base.OnClosing(e);
         }
 
-        public void SetupKeyboardHooks()
+        private void FinishOutLevel()
         {
-            _globalKeyboardHook = new GlobalKeyboardHook();
-            _globalKeyboardHook.KeyboardPressed += OnKeyPressed;
+            _stopwatch.Stop();
+            _updateDatabaseTimer.Stop();
+
+            Upsert();
         }
 
-        private void OnKeyPressed(object sender, GlobalKeyboardHookEventArgs e)
+        private void OnKeyPressed(Keys key, bool shift, bool ctrl, bool alt)
         {
-            if (e.KeyboardState == GlobalKeyboardHook.KeyboardState.KeyUp)
+            switch (key)
             {
-                switch (e.KeyboardData.VirtualCode)
-                {
-                    case GlobalKeyboardHook.VkUp:
-                        _levelData.PlayerDeaths++;
+                case Keys.Up:
+                    _levelData.PlayerDeaths++;
+                    UpdateUi();
+                    break;
+                case Keys.Down:
+                    if(_levelData.PlayerDeaths > 0)
+                    {
+                        _levelData.PlayerDeaths--;
                         UpdateUi();
-                        break;
-                    case GlobalKeyboardHook.VkDown:
-                        if(_levelData.PlayerDeaths > 0)
-                        {
-                            _levelData.PlayerDeaths--;
-                            UpdateUi();
-                        }
-                        break;
-                }
+                    }
+                    break;
             }
         }
 
@@ -144,12 +167,7 @@ namespace MarioMaker2Overlay
             else
             {
                 InitializeAllFieldsToDefaults();
-            }            
-        }
-
-        public void Dispose()
-        {
-            _globalKeyboardHook?.Dispose();
+            }
         }
 
         private void Window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -207,6 +225,16 @@ namespace MarioMaker2Overlay
             data.TotalGlobalAttempts = _levelData.Attempts;
             data.TotalGlobalClears = _levelData.Clears;
             data.TimeElapsed = _stopwatch.ElapsedTicks;
+            data.ClearCondition = _levelData.ClearCondition;
+            data.ClearConditionMagnitude = _levelData.ClearConditionMagnitude;
+            data.ClearTime = _levelData.ClearTime;
+            data.DateTimeUploaded = _levelData.DateTimeUploaded;
+            data.Difficulty = _levelData.DifficultyName;
+            data.GameStyle = _levelData.GameStyle;
+            data.Tags = String.Join(",", _levelData.TagsName);
+            data.Theme = _levelData.Theme;
+            data.TotalGlobalAttempts = _levelData.TotalGlobalAttempts;
+            data.TotalGlobalClears = _levelData.TotalGlobalClears;
 
             return data;
         }
@@ -219,7 +247,7 @@ namespace MarioMaker2Overlay
                 {
                     LabelGameTime.Content = $"{_stopwatch.Elapsed.ToString("hh\\:mm\\:ss\\.ff")}";
                 });
-            }                        
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -256,11 +284,6 @@ namespace MarioMaker2Overlay
             return result;
         }
 
-        private async void LevelCode_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            
-        }
-
         private async void LevelCode_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             string levelCode = LevelCode.Text?.Replace("-", string.Empty) ?? string.Empty;
@@ -271,7 +294,27 @@ namespace MarioMaker2Overlay
 			}
 		}
 
-		private async Task LoadLevel(string levelCode)
+        private void LevelCleared(TimeSpan? clearTime)
+        {
+            _levelData.DateTimeCleared = DateTime.Now;
+            FinishOutLevel();
+            //_levelDataRepository.MarkLevelCleared(_levelData.Code, clearTime);
+        }
+
+        private void FirstClear()
+        {
+            _levelData.FirstClear = true;
+            FinishOutLevel();
+            //_levelDataRepository.MarkFirstClear(_levelData.Code);
+        }
+
+        private void WorldRecord()
+        {
+            FinishOutLevel();
+            //_levelDataRepository.MarkWorldRecord(_levelData.Code);
+        }
+
+        private async Task LoadLevel(string levelCode)
 		{
 			// disable our DB upsert for a bit
 			_updateDatabaseTimer.Stop();
@@ -336,14 +379,22 @@ namespace MarioMaker2Overlay
                 overlayLevelData.Name = apiData.Name;
                 overlayLevelData.TagsName = apiData.TagsName;
                 overlayLevelData.ClearCheckTime = apiData.ClearCheckTime;
+                overlayLevelData.GameStyle = apiData.GameStyleName;
+                overlayLevelData.Theme = apiData.ThemeName;
+                overlayLevelData.TotalGlobalAttempts = apiData.Attempts;
+                overlayLevelData.TotalGlobalClears = apiData.Clears;
 
                 if (levelData?.LevelDataId > 0)
                 {
                     overlayLevelData.LevelDataId = levelData.LevelDataId;
                     overlayLevelData.PlayerDeaths = levelData.PlayerDeaths;
                     overlayLevelData.TimeElapsed = levelData.TimeElapsed;
+                    overlayLevelData.ClearTime = levelData.ClearTime;
+                    overlayLevelData.DateTimeCleared = levelData.DateTimeCleared;
+                    overlayLevelData.DateTimeStarted = levelData.DateTimeStarted;
+                    overlayLevelData.FirstClear = levelData.FirstClear;
                 }
-            }           
+            }
 
             return overlayLevelData;
         }

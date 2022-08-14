@@ -2,7 +2,7 @@
 
 namespace MarioMaker2Overlay.Models
 {
-    internal class MarioMaker2OcrModel
+    public class MarioMaker2OcrModel
     {
 		[JsonPropertyName("level")]
         public LevelDetails Level { get; set; }

@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20220610023851_InitialMigration.cs" />
+    <Compile Remove="Migrations\20220610023851_InitialMigration.Designer.cs" />
+    <Compile Remove="Migrations\20220610023938_AddExtraColumnsToDatabase.cs" />
+    <Compile Remove="Migrations\20220610023938_AddExtraColumnsToDatabase.Designer.cs" />
+    <Compile Remove="Migrations\20220812165151_ChangesToSupportClearingLevels.cs" />
+    <Compile Remove="Migrations\20220812165151_ChangesToSupportClearingLevels.Designer.cs" />
+    <Compile Remove="Migrations\MarioMaker2OverlayContextModelSnapshot.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Persistence\ManuallyCreateEFMigrationsHistory.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Persistence\ManuallyCreateEFMigrationsHistory.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
+</Project>

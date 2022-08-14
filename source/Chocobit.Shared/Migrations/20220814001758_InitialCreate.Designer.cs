@@ -3,19 +3,21 @@ using System;
 using MarioMaker2Overlay.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace MarioMaker2Overlay.Migrations
+namespace Chocobit.Shared.Migrations
 {
     [DbContext(typeof(MarioMaker2OverlayContext))]
-    partial class MarioMaker2OverlayContextModelSnapshot : ModelSnapshot
+    [Migration("20220814001758_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.5");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.8");
 
             modelBuilder.Entity("MarioMaker2Overlay.Persistence.LevelData", b =>
                 {
@@ -29,8 +31,17 @@ namespace MarioMaker2Overlay.Migrations
                     b.Property<int?>("ClearConditionMagnitude")
                         .HasColumnType("INTEGER");
 
+                    b.Property<long>("ClearTime")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Code")
                         .HasMaxLength(11)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DateTimeCleared")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateTimeStarted")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("DateTimeUploaded")
@@ -39,10 +50,16 @@ namespace MarioMaker2Overlay.Migrations
                     b.Property<string>("Difficulty")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("FirstClear")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("GameStyle")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("PlayerDeaths")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PlayerId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Tags")
@@ -60,12 +77,30 @@ namespace MarioMaker2Overlay.Migrations
                     b.Property<int>("TotalGlobalClears")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("WorldRecord")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("LevelDataId");
 
                     b.HasIndex("Code")
                         .IsUnique();
 
                     b.ToTable("LevelData");
+                });
+
+            modelBuilder.Entity("MarioMaker2Overlay.Persistence.Player", b =>
+                {
+                    b.Property<int>("PlayerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("PlayerName")
+                        .HasMaxLength(11)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("PlayerId");
+
+                    b.ToTable("Player");
                 });
 #pragma warning restore 612, 618
         }

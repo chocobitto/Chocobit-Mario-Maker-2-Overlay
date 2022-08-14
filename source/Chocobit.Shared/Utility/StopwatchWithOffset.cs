@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MarioMaker2Overlay.Utility
 {
-    internal class StopwatchWithOffset
+    public class StopwatchWithOffset
     {
         private Stopwatch _stopwatch = new Stopwatch();
         private TimeSpan _offset = TimeSpan.Zero;

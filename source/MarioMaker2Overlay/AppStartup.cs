@@ -37,7 +37,7 @@ namespace MarioMaker2Overlay
                 {
                     if (count == 0)
                     {
-                        context.Database.ExecuteSqlRaw(EmbeddedResourceUtility.GetEmbeddedResourceContentAsString("MarioMaker2Overlay.Persistence.ManuallyCreateEFMigrationsHistory.sql"));
+                        context.Database.ExecuteSqlRaw(EmbeddedResourceUtility.GetEmbeddedResourceContentAsString("Chocobit.Shared.Persistence.ManuallyCreateEFMigrationsHistory.sql"));
                         context.Database.ExecuteSqlRaw("INSERT INTO __EFMigrationsHistory (MigrationId, ProductVersion) VALUES ('20220610023851_InitialMigration', '6.0.5')");
                     }
                 }

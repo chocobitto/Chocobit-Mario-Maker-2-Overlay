@@ -9,11 +9,16 @@ using MarioMaker2Overlay.Models;
 
 namespace MarioMaker2Overlay.Utility
 {
-    internal class WebsocketClientHelper
+    public class WebsocketClientHelper
     {
         public Action<MarioMaker2OcrModel>? OnLevelCodeChanged;
         public Action<MarioMaker2OcrModel>? OnMarioDeath;
         public Action<MarioMaker2OcrModel>? OnStartOver;
+        public Action<MarioMaker2OcrModel>? OnClear;
+        public Action? OnExitOrQuit;
+        public Action? OnSkip;
+        public Action? OnWorldRecord;
+        public Action? OnFirstClear;
 
         public async Task RunAsync()
         {
@@ -83,6 +88,26 @@ namespace MarioMaker2Overlay.Utility
                 else if (OnStartOver != null && (dataFromService?.Type.Equals("restart", StringComparison.OrdinalIgnoreCase) ?? false))
                 {
                     OnStartOver(dataFromService);
+                }
+                else if (OnClear != null && (dataFromService?.Type.Equals("clear", StringComparison.OrdinalIgnoreCase) ?? false))
+                {
+                    OnClear(dataFromService);
+                }
+                else if (OnExitOrQuit != null && (dataFromService?.Type.Equals("exit", StringComparison.OrdinalIgnoreCase) ?? false))
+                {
+                    OnExitOrQuit();
+                }
+                else if (OnSkip != null && (dataFromService?.Type.Equals("skip", StringComparison.OrdinalIgnoreCase) ?? false))
+                {
+                    OnSkip();
+                }
+                else if (OnWorldRecord != null && (dataFromService?.Type.Equals("worldrecord", StringComparison.OrdinalIgnoreCase) ?? false))
+                {
+                    OnWorldRecord();
+                }
+                else if (OnFirstClear != null && (dataFromService?.Type.Equals("firstclear", StringComparison.OrdinalIgnoreCase) ?? false))
+                {
+                    OnFirstClear();
                 }
             }
             catch (Exception ex)

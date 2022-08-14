@@ -41,7 +41,7 @@
                                 <Label x:Name="LabelTags" Content="--, --" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" FontSize="24" Foreground="White"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="20,0,0,0">
-                                <TextBox CharacterCasing="Upper" Name="LevelCode" Text="" TextWrapping="NoWrap" Width="185" KeyUp="LevelCode_KeyUp" TextChanged="LevelCode_TextChanged" Background="Transparent" BorderBrush="#00ABADB3" FontSize="24" Foreground="White" />
+                                <TextBox CharacterCasing="Upper" Name="LevelCode" Text="" TextWrapping="NoWrap" Width="185" TextChanged="LevelCode_TextChanged" Background="Transparent" BorderBrush="#00ABADB3" FontSize="24" Foreground="White" />
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
