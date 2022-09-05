@@ -1,20 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Chocobit.Shared.Logic;
 using MarioMaker2Overlay.Models;
 using MarioMaker2Overlay.Persistence;
@@ -35,6 +23,7 @@ namespace ChocobitAwesomenessIndex
         private PlayerRepository _playerRepository = new();
         private int _playersActiveIndex = 0;
         private List<Player> _players = new();
+        private KeyboardHook _keyboardHook = new KeyboardHook(true);
 
         public MainWindow()
         {
@@ -55,8 +44,7 @@ namespace ChocobitAwesomenessIndex
             //    HideWindow();
             //};
 
-            var keyboardHook = new KeyboardHook(true);
-            keyboardHook.KeyUp += OnKeyPressed;
+            _keyboardHook.KeyUp += OnKeyPressed;
 
             _players = _playerRepository.GetPlayers();
          
@@ -67,19 +55,41 @@ namespace ChocobitAwesomenessIndex
         {
             if ((key == Keys.Right || key == Keys.Left) && ctrl && shift && alt)
             {
-                await ChangePlayer();
+                if (key == Keys.Right)
+                {
+                    await ChangePlayer();
+                }
+                else
+                {
+                    await ChangePlayer(false);
+                }
+
             }
         }
 
-        private async Task ChangePlayer()
+        private async Task ChangePlayer(bool forward = true)
         {
-            if (_players.Count > (_playersActiveIndex + 1))
+            if (forward)
             {
-                _playersActiveIndex++;
+                if (_players.Count > (_playersActiveIndex + 1))
+                {
+                    _playersActiveIndex++;
+                }
+                else
+                {
+                    _playersActiveIndex = 0;
+                }
             }
             else
             {
-                _playersActiveIndex = 0;
+                if (_playersActiveIndex > 0)
+                {
+                    _playersActiveIndex--;
+                }
+                else
+                {
+                    _playersActiveIndex = _players.Count - 1;
+                }
             }
 
             await ShowActivePlayer();

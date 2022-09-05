@@ -3,6 +3,7 @@ using System;
 using MarioMaker2Overlay.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chocobit.Shared.Migrations
 {
     [DbContext(typeof(MarioMaker2OverlayContext))]
-    partial class MarioMaker2OverlayContextModelSnapshot : ModelSnapshot
+    [Migration("20220902135458_ReviseUniqueConstraintAndIndex")]
+    partial class ReviseUniqueConstraintAndIndex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.8");

@@ -86,10 +86,6 @@ namespace SnagFree.TrayApp.Core
             }
         }
 
-        public void test()
-        {
-            if (OnError != null) OnError(new Exception("test"));
-        }
         bool IsFinalized = false;
         ~KeyboardHook()
         {
@@ -141,7 +137,7 @@ namespace SnagFree.TrayApp.Core
                 {
                     KeyEvents kEvent = (KeyEvents)W;
 
-                    Int32 vkCode = Marshal.ReadInt32((IntPtr)L); //Leser vkCode som er de første 32 bits hvor L peker.
+                    int vkCode = Marshal.ReadInt32(L); //Reads vkCode which is the first 32 bits found where L is pointing.
 
                     if (kEvent != KeyEvents.KeyDown && kEvent != KeyEvents.KeyUp && kEvent != KeyEvents.SKeyDown && kEvent != KeyEvents.SKeyUp)
                     {

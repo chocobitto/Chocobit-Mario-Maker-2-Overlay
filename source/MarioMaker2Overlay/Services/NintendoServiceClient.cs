@@ -9,18 +9,15 @@ namespace MarioMaker2Overlay
 	public class NintendoServiceClient
 	{
 		private readonly HttpClient _httpClient;
-		private CancellationTokenSource _cancellationToken = new CancellationTokenSource();
 
 		public NintendoServiceClient(HttpClient httpClient)
 		{
 			_httpClient = httpClient;
 		}
 
-		public async Task<MarioMakerLevelData> GetLevelInfo(string levelCode)
+		public async Task<MarioMakerLevelData> GetLevelInfo(string levelCode, CancellationToken cancellationToken)
 		{
-			_cancellationToken = new CancellationTokenSource();
-
-			HttpResponseMessage response = await _httpClient.GetAsync($"https://tgrcode.com/mm2/level_info/{levelCode}", _cancellationToken.Token);
+			HttpResponseMessage response = await _httpClient.GetAsync($"https://tgrcode.com/mm2/level_info/{levelCode}", cancellationToken);
 
 			response.EnsureSuccessStatusCode();
 
@@ -29,11 +26,6 @@ namespace MarioMaker2Overlay
 				?? new();
 
 			return result;
-		}
-
-        internal void CancelOutstandingRequest()
-        {
-			_cancellationToken.Cancel();
 		}
     }
 }

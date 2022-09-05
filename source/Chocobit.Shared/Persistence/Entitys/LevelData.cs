@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace MarioMaker2Overlay.Persistence
 {
     [Table(nameof(LevelData))]
-    [Index(nameof(Code), IsUnique = true)]
+    [Index(nameof(PlayerId), nameof(Code), IsUnique = true)]
     public class LevelData
     {
         [Key]

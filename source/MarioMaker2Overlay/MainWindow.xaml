@@ -6,9 +6,9 @@
         mc:Ignorable="d"
         Title="MainWindow" Name="Window" ResizeMode="NoResize" WindowStartupLocation="Manual" Top="0" Left="0" MouseDown="Window_MouseDown" SizeToContent="WidthAndHeight" Background="Black" Topmost="True" WindowStyle="None" SizeChanged="Window_SizeChanged">
     <Grid>
-        <StackPanel Margin="0,0,10,10" VerticalAlignment="Top">
+        <StackPanel Margin="0,0,10,0" VerticalAlignment="Top">
             <DockPanel VerticalAlignment="Top">
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,0">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="20,0,0,10">
                             <Label x:Name="LabelLevelName" Content="---" Padding="0" FontSize="36" VerticalAlignment="Center" Foreground="White"/>
@@ -62,9 +62,21 @@
                             <Label DockPanel.Dock="Right" x:Name="LabelGameTime" Content="00:00:00" FontSize="24" VerticalAlignment="Center" Margin="10,0,0,0" Padding="0" Foreground="White"/>
                             <Image DockPanel.Dock="Right" Height="35" Source="/Assets/Images/timer_blue.png"/>
                         </DockPanel>
+                        
                     </StackPanel>
-                    <Label></Label>
                 </DockPanel>
+            </DockPanel>
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                    <DockPanel DockPanel.Dock="Left">
+                        <Label DockPanel.Dock="Left" Name="LabelApiLoadTime" Content="" Foreground="White" Margin="0" Padding="0" FontSize="8" HorizontalContentAlignment="Right"></Label>
+                    </DockPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <DockPanel DockPanel.Dock="Right">
+                        <Label DockPanel.Dock="Right" Name="LabelPlayerName" Content="" Foreground="White" Margin="0" Padding="0" FontSize="8" HorizontalContentAlignment="Right"></Label>
+                    </DockPanel>
+                </StackPanel>
             </DockPanel>
         </StackPanel>
     </Grid>
