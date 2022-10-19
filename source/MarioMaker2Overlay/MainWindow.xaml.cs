@@ -35,6 +35,14 @@ namespace MarioMaker2Overlay
 
         public MainWindow()
         {
+            // start logger
+            _logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.File("log\\log.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 10)
+                .CreateLogger();
+
+            _logger.Information("Logger Initialized");
+
             InitializeComponent();
 
             _players = _playerRepository.GetPlayers();
@@ -47,15 +55,21 @@ namespace MarioMaker2Overlay
             {
                 if (response.Level != null)
                 {
-                    Dispatcher.Invoke(() =>
+                    _logger.Information($"OnLevelCodeChanged received from websocket connection: {response.Level.Code}.");
+
+                    Dispatcher.Invoke(async () =>
                     {
                         LevelCode.Text = response.Level.Code;
+
+                        await LoadLevelWithWaitAndCancel(response.Level.Code);
                     });
                 }
             };
 
             Action<MarioMaker2OcrModel> marioDeath = (response) =>
             {
+                _logger.Information("MarioDeath received from websocket connection.");
+
                 _levelData.PlayerDeaths++;
 
                 Dispatcher.Invoke(() =>
@@ -69,6 +83,8 @@ namespace MarioMaker2Overlay
 
             _websocketClientHelper.OnClear = (response) =>
             {
+                _logger.Information("OnClear received from websocket connection.");
+
                 Dispatcher.Invoke(() =>
                 {
                     Regex timeParser = new Regex(@"(?<minutes>\d\d)'(?<seconds>\d\d)""(?<tenths>\d\d\d)");
@@ -100,14 +116,6 @@ namespace MarioMaker2Overlay
 
             _updateDatabaseTimer.Elapsed += TryUpsertLevel;
             _updateDatabaseTimer.Enabled = true;
-
-            // start logger
-            _logger = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .WriteTo.File("log\\log.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 10)
-                .CreateLogger();
-
-            _logger.Information("Logger Initialized");
         }
 
         protected async override void OnInitialized(EventArgs e)
@@ -127,6 +135,8 @@ namespace MarioMaker2Overlay
             // Check to see if the data exists
             if (_levelData?.LevelDataId > 0 || !string.IsNullOrWhiteSpace(_levelData?.Code))
             {
+                _logger.Debug($"Upsertting data into database.");
+
                 // if it exists update it
                 LevelData levelData;
 
@@ -138,6 +148,8 @@ namespace MarioMaker2Overlay
 
         private async Task ChangePlayer(bool forward = true)
         {
+            _logger.Debug("ChangePlayer called");
+
             if (_players != null && _players.Count > 0)
             {
                 if (forward)
@@ -169,6 +181,8 @@ namespace MarioMaker2Overlay
 
         private async Task ShowActivePlayer()
         {
+            _logger.Debug($"Showing active player: {_players[_playersActiveIndex].PlayerName}");
+
             Dispatcher.Invoke(() =>
             {
                 LabelPlayerName.Content = _players[_playersActiveIndex].PlayerName;
@@ -229,6 +243,8 @@ namespace MarioMaker2Overlay
         {
             if (!string.IsNullOrWhiteSpace(_levelData.Code) && !string.IsNullOrWhiteSpace(_levelData.Name))
             {
+                _logger.Debug($"Updating the UI with level data.");
+
                 LabelDeathCount.Content = $"{_levelData.PlayerDeaths}";
                 LabelClears.Content = $"{_levelData.Clears}/{_levelData.Attempts} ({_levelData.ClearRate})";
                 LabelTags.Content = string.Join(", ", _levelData.TagsName) ?? "--";
@@ -256,15 +272,18 @@ namespace MarioMaker2Overlay
         {
             decimal attempts = _levelData.PlayerDeaths + 1;
 
-            if(attempts > 0)
+            if (attempts > 0)
             {
                 decimal winrate = 1 / attempts * 100;
 
                 LabelCalculatedWinRate.Content = $"{winrate:f2}%";
+
+                _logger.Debug($"Calculating the current win rate at {winrate:f2}");
             }
             else
             {
                 LabelCalculatedWinRate.Content = string.Empty;
+                _logger.Debug("Setting win rate to empty");
             }
         }
 
@@ -361,22 +380,6 @@ namespace MarioMaker2Overlay
 
         CancellationTokenSource _loadLevelCancellationTokenSource = new CancellationTokenSource();
 
-        private async void LevelCode_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
-        {
-            string levelCode = LevelCode.Text?.Replace("-", string.Empty) ?? string.Empty;
-
-            if (IsValidLevelCode(levelCode))
-            {
-                await LoadLevelWithWaitAndCancel(levelCode);
-
-                //ThreadPool.QueueUserWorkItem(new WaitCallback(LoadLevel), _loadLevelCancellationTokenSource.Token);
-
-                //Thread loadLevelThread = new ThreadStart(() => LoadLevel(levelCode));
-
-                //await LoadLevel(levelCode);
-            }
-		}
-
         private async Task LoadLevelWithWaitAndCancel(string levelCode)
         {
             _loadLevelCancellationTokenSource.Cancel();
@@ -395,6 +398,8 @@ namespace MarioMaker2Overlay
 
         private void FirstClear()
         {
+            _logger.Information("FirstClear received from websocket connection.");
+
             _levelData.FirstClear = true;
             FinishOutLevel();
             //_levelDataRepository.MarkFirstClear(_levelData.Code);
@@ -402,14 +407,20 @@ namespace MarioMaker2Overlay
 
         private void WorldRecord()
         {
+            _logger.Information("WorldRecord received from websocket connection.");
+
             FinishOutLevel();
             //_levelDataRepository.MarkWorldRecord(_levelData.Code);
         }
 
         private async Task LoadLevel(string levelCode)
 		{
+            _logger.Information($"Loading new level {levelCode}.");
+
             if (_players != null && _players.Count > 0)
             {
+                _logger.Debug($"Stopping database update timer.");
+                
                 // disable our DB upsert for a bit
                 _updateDatabaseTimer.Stop();
 
@@ -423,14 +434,17 @@ namespace MarioMaker2Overlay
 
                     UpdateUi();
 
+                    _logger.Debug("Restarting the level timer");
+
                     _stopwatch.Restart();
 
                     _stopwatch.Start(new TimeSpan(_levelData.TimeElapsed));
                 }
                 finally
                 {
-                    _updateDatabaseTimer.Start();
+                    _logger.Debug($"Restarting database update timer.");
 
+                    _updateDatabaseTimer.Start();
                 }
             }
 		}
@@ -443,6 +457,7 @@ namespace MarioMaker2Overlay
 
             try
 			{
+                _logger.Debug($"Getting level data from Nintendo API.");
                 result = await _nintendoServiceClient.GetLevelInfo(levelCode, _loadLevelCancellationTokenSource.Token);
             }
 			catch 
@@ -452,7 +467,12 @@ namespace MarioMaker2Overlay
             finally
             {
                 stopwatch.Stop();
-                LabelApiLoadTime.Content = $"API Load wait time: {stopwatch.Elapsed.ToString("ss':'ffff")}";
+
+                string message = $"API Load wait time: {stopwatch.Elapsed.ToString("ss':'ffff")}";
+
+                _logger.Debug(message);
+
+                LabelApiLoadTime.Content = message;
             }
 
             return result;
@@ -506,6 +526,25 @@ namespace MarioMaker2Overlay
             WpfScreen myScreen = WpfScreen.GetScreenFrom(this);
 
             Left = (myScreen.DeviceBounds.Width / 2) - (Width / 2);
+        }
+
+        private async void LevelCode_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                string levelCode = LevelCode.Text?.Replace("-", string.Empty) ?? string.Empty;
+
+                if (IsValidLevelCode(levelCode))
+                {
+                    await LoadLevelWithWaitAndCancel(levelCode);
+
+                    //ThreadPool.QueueUserWorkItem(new WaitCallback(LoadLevel), _loadLevelCancellationTokenSource.Token);
+
+                    //Thread loadLevelThread = new ThreadStart(() => LoadLevel(levelCode));
+
+                    //await LoadLevel(levelCode);
+                }
+            }
         }
     }
 }

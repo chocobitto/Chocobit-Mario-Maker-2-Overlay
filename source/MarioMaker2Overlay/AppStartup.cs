@@ -1,10 +1,7 @@
-﻿using MarioMaker2Overlay.Persistence;
-using MarioMaker2Overlay.Utility;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Data.Common;
-using System.IO;
+﻿using System.Threading.Tasks;
 using System.Windows;
+using MarioMaker2Overlay.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace MarioMaker2Overlay
@@ -13,16 +10,30 @@ namespace MarioMaker2Overlay
     {
         public void AppStartup(object sender, StartupEventArgs e)
         {
-            InitializeDatabase();
+            InitializeDatabase()
+                .GetAwaiter();
 
             MainWindow mainwindow = new();
 
             mainwindow.Show();
         }
 
-        private void InitializeDatabase()
+        private async Task InitializeDatabase()
         {
-            MarioMaker2OverlayContext context = new();
+            using (MarioMaker2OverlayContext context = new())
+            {
+                if (!(await context.Player.AnyAsync()))
+                {
+                    await context.Player.AddAsync(new Player { PlayerName = "Player 1" });
+                    await context.SaveChangesAsync();
+                }
+
+                context.Database.Migrate();
+            }
+
+            // If there are no defined players, create one
+
+
 
             //// check if the __EFMigrationsHistory exists, if not add it
             //// with the initial Migration row included
@@ -45,7 +56,6 @@ namespace MarioMaker2Overlay
             //    myConnection.Close();
             //}
 
-            context.Database.Migrate();
         }
     }
 }
