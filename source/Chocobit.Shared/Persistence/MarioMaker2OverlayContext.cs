@@ -10,7 +10,7 @@ namespace MarioMaker2Overlay.Persistence
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("FileName=C:\\Users\\omata\\source\\repos\\mariomaker2overlay\\source\\MarioMaker2Overlay\\bin\\Debug\\net6.0-windows\\MarioMaker2OverlayDatabase.db",
+            optionsBuilder.UseSqlite("FileName=MarioMaker2OverlayDatabase.db",
                 options => options.MigrationsAssembly(Assembly.GetExecutingAssembly().FullName));
             base.OnConfiguring(optionsBuilder);
         }

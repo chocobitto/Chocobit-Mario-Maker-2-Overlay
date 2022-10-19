@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using MarioMaker2Overlay.Models;
 using MarioMaker2Overlay.Persistence;
 using MarioMaker2Overlay.Utility;
+using Serilog;
 using SnagFree.TrayApp.Core;
 
 namespace MarioMaker2Overlay
@@ -30,6 +31,7 @@ namespace MarioMaker2Overlay
         private List<Player> _players = new();
         private int _playersActiveIndex = 0;
         private KeyboardHook _keyboardHook = new KeyboardHook(true);
+        private ILogger? _logger = null;
 
         public MainWindow()
         {
@@ -98,6 +100,14 @@ namespace MarioMaker2Overlay
 
             _updateDatabaseTimer.Elapsed += TryUpsertLevel;
             _updateDatabaseTimer.Enabled = true;
+
+            // start logger
+            _logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.File("log\\log.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 10)
+                .CreateLogger();
+
+            _logger.Information("Logger Initialized");
         }
 
         protected async override void OnInitialized(EventArgs e)
